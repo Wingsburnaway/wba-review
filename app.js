@@ -93,17 +93,6 @@
     run();
     const tid = setInterval(run, 1000);
   }
-  function paintHero() {
-    const host = $("#hero-frags");
-    if (!host) return;
-    const live = new Set(SONGS.map((s) => s.id));
-    const picks = [
-      { id: "when-the-love-runs-out", line: "When the love runs out", cls: "frag-a" },
-      { id: "down", line: "When it all comes down", cls: "frag-b" }
-    ].filter((h) => live.has(h.id));
-    host.innerHTML = picks.map((h) => `<span class="${h.cls}">${esc(h.line)}</span>`).join("");
-  }
-
   const KEEP_MS = 30 * 24 * 60 * 60 * 1000; // stay signed in 30 days
   function loadUser() {
     try {
@@ -593,7 +582,6 @@
 
   $("#storage-label").textContent = window.WBAStorage.label;
   $("#song-count").textContent = String(SONGS.length);
-  paintHero();
   startCountdown();
 
   Promise.all([window.WBAStorage.getAll(), window.WBAStorage.getStages()]).catch(() => [{}, {}]).then(([rev, stg]) => {

@@ -4,7 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Wings Burn Away · Exit Us</title>
-<link rel="stylesheet" href="styles.css?v=202611101245">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css?v=202611101325">
 </head>
 <body class="locked">
 
@@ -30,23 +33,53 @@
     <div class="hero-bg" aria-hidden="true">
       <div class="hero-art"></div>
       <div class="hero-grain"></div>
-      <div class="hero-frags" id="hero-frags"></div>
     </div>
     <span class="corner c1" aria-hidden="true"></span><span class="corner c2" aria-hidden="true"></span>
     <span class="corner c3" aria-hidden="true"></span><span class="corner c4" aria-hidden="true"></span>
     <div class="hero-in">
-      <div class="hero-brand">
-        <h1 class="sr">Wings Burn Away — Exit Us record tracker</h1>
+      <h1 class="sr">Wings Burn Away — Exit Us record tracker</h1>
+      <div class="hero-lockup">
         <div class="logo-wrap">
           <img class="logo" src="assets/logo-white.png" alt="Wings Burn Away logo: engraved wings with flame and ash tips" width="1280" height="420">
         </div>
-        <div class="album" aria-label="Album: Exit Us"><span>EXIT US</span></div>
+        <div class="hero-road" aria-label="Album: Exit Us">
+          <div class="road-stage">
+            <div class="road-bed">
+              <svg class="road-marks" viewBox="0 0 1000 260" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="emberLine" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#6E0F14" stop-opacity=".12"/>
+                    <stop offset=".55" stop-color="#6E0F14" stop-opacity=".5"/>
+                    <stop offset="1" stop-color="#b42420" stop-opacity=".75"/>
+                  </linearGradient>
+                </defs>
+                <g stroke="#0b0b0b" fill="none" stroke-linecap="butt" opacity=".48">
+                  <line x1="208" y1="14" x2="208" y2="248" stroke-width="10"/>
+                  <line x1="236" y1="14" x2="236" y2="248" stroke-width="10"/>
+                  <line x1="764" y1="14" x2="764" y2="248" stroke-width="10"/>
+                  <line x1="792" y1="14" x2="792" y2="248" stroke-width="10"/>
+                </g>
+                <g stroke="#0b0b0b" stroke-width="3.2" opacity=".32">
+                  <path d="M200 28l44 16M200 52l44 16M200 76l44 16M200 100l44 16M200 124l44 16M200 148l44 16M200 172l44 16M200 196l44 16M200 220l44 16"/>
+                  <path d="M756 28l44 16M756 52l44 16M756 76l44 16M756 100l44 16M756 124l44 16M756 148l44 16M756 172l44 16M756 196l44 16M756 220l44 16"/>
+                </g>
+                <line x1="500" y1="6" x2="500" y2="254" stroke="url(#emberLine)" stroke-width="12"/>
+                <line x1="500" y1="6" x2="500" y2="254" stroke="#F2EFE6" stroke-width="5" stroke-dasharray="22 18" opacity=".82"/>
+              </svg>
+              <p class="road-title">EXIT US</p>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="hero-foot">
       <p class="tag">Record tracker · <span id="song-count">21</span> songs · pre / prod / post / marketing</p>
-      <div class="countdown" id="countdown" aria-label="Countdown to drum tracking">
-        <div class="cd-kicker">Drum tracking</div>
-        <div class="cd-body" id="cd-body"></div>
+      <div class="cd-row">
+        <img class="cd-emblem" src="assets/emblem-w.png" width="600" height="593" alt="Winged W emblem">
+        <div class="countdown" id="countdown" aria-label="Countdown to drum tracking">
+          <div class="cd-kicker">Drum tracking</div>
+          <div class="cd-body" id="cd-body"></div>
+        </div>
+        <img class="cd-emblem" src="assets/emblem-ghost.png" width="512" height="600" alt="Ghost of Icarus emblem">
       </div>
       </div>
     </div>
@@ -67,9 +100,9 @@
   <footer>Wings Burn Away · Exit Us · reviews and stage checks are shared with the band.</footer>
 </div>
 
-<script src="data.js?v=202611101245"></script>
-<script src="storage.js?v=202611101245"></script>
-<script src="app.js?v=202611101245"></script>
+<script src="data.js?v=202611101325"></script>
+<script src="storage.js?v=202611101325"></script>
+<script src="app.js?v=202611101325"></script>
 <script>
   document.getElementById("song-count-stat").textContent = window.WBA_DATA.SONGS.length;
 </script>
