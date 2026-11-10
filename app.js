@@ -155,7 +155,7 @@
   function phase(p) {
     const done = SONGS.filter((s) => p.stages.some((x) => st(x, s) === "done")).length;
     const d = p.id === "pre"
-      ? "Suno demo is confirmed done for the original 16 keepers only. The five songs added later are unconfirmed. Logic import onward: awaiting status."
+      ? "Suno demo is confirmed done for the original keepers only. Songs added later are unconfirmed. Logic import onward: awaiting status."
       : p.id === "prod"
         ? "Vocals and vocal edits are on hold until the new singer is chosen. Everything else: awaiting status."
         : "Mix, stereo masters and Atmos mixes follow production lock.";
@@ -185,7 +185,7 @@
   const SECS = () => [
     { id: "all", t: "All songs — overview", m: `${SONGS.length} songs · 19 stages`, b: grid },
     { id: "songs", t: "Song cards", m: `${SONGS.length} cards`, b: () => cards(reviews) },
-    ...PHASES.map((p) => ({ id: p.id, t: p.name, m: p.id === "pre" ? "Suno: 16/21 confirmed" : p.id === "prod" ? "Vocals on hold" : "Unknown", b: () => phase(p) })),
+    ...PHASES.map((p) => ({ id: p.id, t: p.name, m: p.id === "pre" ? `Suno: ${SONGS.filter((x) => x.suno === "done").length}/${SONGS.length} confirmed` : p.id === "prod" ? "Vocals on hold" : "Unknown", b: () => phase(p) })),
     { id: "mkt", t: "Marketing", m: "10 proposed to-dos", b: () => MKT },
     { id: "art", t: "Artwork / brand", m: "Ash Wings · Ink & Paper", b: () => ART }
   ];
