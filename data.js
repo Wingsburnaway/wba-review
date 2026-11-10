@@ -93,6 +93,184 @@ window.WBA_DATA = (() => {
       lyricsStatus: "present", lyrics: "The smoke is a blowin’\nThey better know that you’re a rising star\n\nThe proof’s in the puddin’\nShades indoors, cocaine and fancy cars\n\n(Then It all. Comes. Down.)\n\nPack your bags we’re heading down below\nBetter grab what you can, it’ll be a while, nobody knows\nYou gotta Hold on tight, the floor is about to drop\nWhen it all comes down (it all comes down)\nit all comes down, you don’t wanna be on top\n\nWhen it all comes down (it all comes down)\nit all comes down, you don’t wanna be on top\n\nThe makin’s in the fakin’\nBig contracts, Cadillacs, all gone in a day\nBetter get with the gettin’\nAnd sell your soul if you got one to give away\n\n(Then It all. Comes. Down.)\n\nPack your bags we’re heading down below\nBetter grab what you can, it’ll be a while, nobody knows\nYou gotta Hold on tight, the floor is about to drop\nWhen it all comes down (it all comes down)\nit all comes down, you don’t wanna be on top\n\n(Then It all. Comes. Down.)\n\nPack your bags we’re heading down below\nBetter grab what you can, it’ll be a while, nobody knows\nYou gotta Hold on tight, the floor is about to drop\nWhen it all comes down (it all comes down)\nit all comes down, you don’t wanna be on top" }
   ];
 
+
+  const THEMES = {
+    "love-lost": {
+      name: "Love wanted and lost",
+      blurb: "These songs sit with love as something wanted, taken, or already gone — a heart left open, ghosts in a bed, an angel who left too soon."
+    },
+    "leaving": {
+      name: "Leaving and being left",
+      blurb: "Someone is always walking away, driving off, or watching the other go. Tickets, rear-view mirrors, and trains that don't come back keep score."
+    },
+    "cycles": {
+      name: "Cycles and repetition",
+      blurb: "The same day arrives again. Patterns repeat — a demon in a new face, a game that asks if you'd like to play again, a tomorrow you should have seen coming."
+    },
+    "illusion": {
+      name: "Illusion vs. real",
+      blurb: "Fantasy, simulation, projection, and the nagging sense that nothing's real anymore. The record keeps asking what you're actually looking at."
+    },
+    "time-memory": {
+      name: "Time and memory",
+      blurb: "Time gets stolen, stored, or spent in the wrong tense — memories on a drive, a future taken back, a present forgotten while someone trips on what's next."
+    },
+    "the-road": {
+      name: "The road",
+      blurb: "Cars, tires, parking lots, maps, and rides that can't quite get started. Motion is a promise these songs don't always keep."
+    },
+    "descent": {
+      name: "Collapse and descent",
+      blurb: "Floors drop, tides come in, lights flicker out, and tickets lead downward. When it all comes down, being on top is the last place you want to be."
+    },
+    "fate": {
+      name: "Fate and chance",
+      blurb: "Fortune, missed chances, stars that may or may not align, and a fate that won't wait for your plans."
+    },
+    "isolation": {
+      name: "Isolation",
+      blurb: "Nowhere to go, nowhere to hide. Parking-lot solace, an apartment alone, the quiet of being the one left behind."
+    },
+    "the-self": {
+      name: "The self",
+      blurb: "Finding yourself, loving yourself, hiding a wild heart, or becoming what you create. The question underneath is who you are when no one else is in the room."
+    },
+    "signal": {
+      name: "Signal and tape",
+      blurb: "Tapes rewind, drives keep the dead alive, pixels glitch, and stories get written in ink that bleeds. The record itself is a medium the songs don't quite trust."
+    }
+  };
+
+  const ALBUM_SUMMARY = "Exit Us is a record about what remains after love, luck, and plans fall apart. People keep leaving or getting left — in cars that won't go into drive, on trains that don't come back, in parking lots and rear-view mirrors — while the same tomorrow keeps arriving. Memory lives on drives and tapes; futures get taken; the line between what's real and what's simulated keeps slipping. Underneath is a downward pull (tides, tickets to hell, fading light, a floor about to drop) and a stubborn question of whether you can still find yourself, or be loved, before it all comes down.";
+
+  const ANNO = {
+    "when-the-love-runs-out": {
+      themes: ["love-lost", "time-memory", "illusion", "signal"],
+      motifs: ["ghosts", "memories on a drive", "simulation"],
+      keyLine: "All you have are memories on a drive"
+    },
+    "edges-of-earth": {
+      themes: ["leaving", "time-memory", "the-road"],
+      motifs: ["edges of the earth", "earthquake", "the road"],
+      keyLine: "you drive me to the edges of the earth"
+    },
+    "opposite-day": {
+      themes: ["illusion", "cycles", "the-self", "signal"],
+      motifs: ["tape", "monsters", "the alarm"],
+      keyLine: "You become what you create but still unsatisfied"
+    },
+    "find-yourself": {
+      themes: ["love-lost", "isolation", "the-self"],
+      motifs: ["nowhere to go", "walls", "the heart"],
+      keyLine: "When will you let yourself be loved?"
+    },
+    "the-alone": {
+      themes: ["leaving", "isolation", "the-road", "love-lost"],
+      motifs: ["tires", "rear-view mirror", "tickets"],
+      keyLine: "It’d be your turn as the one alone"
+    },
+    "living-again": {
+      themes: ["love-lost", "time-memory", "cycles"],
+      motifs: ["living again", "time robbed"],
+      keyLine: "When, is it right to start again?"
+    },
+    "why-should-i-be-surprised": {
+      themes: ["cycles", "fate", "love-lost", "descent"],
+      motifs: ["demons", "the tide", "tomorrow"],
+      keyLine: "The tide may come in and sweep your feet off the ground"
+    },
+    "the-getaway-theme": {
+      themes: ["leaving", "the-road", "isolation"],
+      motifs: ["tickets", "cars", "maps"],
+      keyLine: "I can’t put it in drive"
+    },
+    "wild-heart": {
+      themes: ["the-self", "the-road", "love-lost"],
+      motifs: ["smoke", "craters", "lights"],
+      keyLine: "When your wild heart comes alive"
+    },
+    "moon": {
+      themes: ["love-lost", "fate", "leaving", "descent"],
+      motifs: ["six feet down", "wedding gown", "fate"],
+      keyLine: "Just to know what it feels like to be loved?"
+    },
+    "sweet-sweet-love": {
+      themes: ["love-lost", "the-self"],
+      motifs: ["darkness and light", "black and white", "gears"],
+      keyLine: "Within the darkness there is light"
+    },
+    "dirty-talk": {
+      themes: ["isolation", "illusion", "fate", "leaving"],
+      motifs: ["stars", "astronauts", "gravity", "poison"],
+      keyLine: "Where your stars align"
+    },
+    "talk-in-my-sleep": {
+      themes: ["time-memory", "the-self", "cycles", "signal"],
+      motifs: ["ink", "pages", "shaking hands"],
+      keyLine: "And I want it fucking back."
+    },
+    "future-tripper": {
+      themes: ["time-memory", "isolation", "the-self"],
+      motifs: ["the future", "dreaming"],
+      keyLine: "I’m tripping on the future"
+    },
+    "analog-exe": {
+      themes: ["illusion", "signal", "cycles"],
+      motifs: ["simulation", "tape", "the game"],
+      keyLine: "Nothing’s real anymore"
+    },
+    "stuffed-animal": {
+      themes: ["illusion", "the-self", "signal"],
+      motifs: ["pixels", "empty vessel", "animals"],
+      keyLine: "I am the glitching pixels you’ve picked out from far away"
+    },
+    "ticket-to-hell": {
+      themes: ["descent", "illusion", "the-road"],
+      motifs: ["tickets", "bitter ride", "conscience"],
+      keyLine: "It takes a ticket to hell"
+    },
+    "big-bang": {
+      themes: ["descent", "leaving", "cycles"],
+      motifs: ["trains", "bottles", "birds circling", "flickering light"],
+      keyLine: "Flickers out like a light"
+    },
+    "meteorites": {
+      themes: ["fate", "love-lost", "descent", "illusion"],
+      motifs: ["strange destinations", "fading", "fate"],
+      keyLine: "It’s fading away"
+    },
+    "out": {
+      themes: ["isolation", "leaving", "the-road", "fate"],
+      motifs: ["parking lots", "nowhere to go", "the road", "pawns"],
+      keyLine: "This parking lot is solace"
+    },
+    "solarace": {
+      themes: ["love-lost", "time-memory", "isolation"],
+      motifs: ["angels", "guardians"],
+      keyLine: "And you were gone too soon"
+    },
+    "down": {
+      themes: ["descent", "illusion", "fate"],
+      motifs: ["smoke", "rising star", "the floor dropping", "Cadillacs"],
+      keyLine: "it all comes down, you don’t wanna be on top"
+    }
+  };
+
+  const HERO_LINES = [
+    { id: "when-the-love-runs-out", line: "When the love runs out" },
+    { id: "edges-of-earth", line: "you drive me to the edges of the earth" },
+    { id: "opposite-day", line: "Rewind the tape" },
+    { id: "the-alone", line: "Tires kicking gravel" },
+    { id: "why-should-i-be-surprised", line: "The tide may come in" },
+    { id: "the-getaway-theme", line: "I can’t put it in drive" },
+    { id: "dirty-talk", line: "Where your stars align" },
+    { id: "future-tripper", line: "I’m tripping on the future" },
+    { id: "analog-exe", line: "Nothing’s real anymore" },
+    { id: "meteorites", line: "It’s fading away" },
+    { id: "big-bang", line: "Flickers out like a light" },
+    { id: "down", line: "When it all comes down" }
+  ];
+
   const STRUCK = new Set(["orion", "move-me"]);
   const META = {"when-the-love-runs-out": ["2009", "Drop C", "Moving Forward"], "edges-of-earth": ["2011", "Drop C", "Edges of Earth"], "opposite-day": ["2014", "E", "Opposite Day"], "find-yourself": ["2017", "E", "Find Yourself"], "the-alone": ["2010", "E", "The Alone"], "living-again": ["2020", "E", "Living Again"], "why-should-i-be-surprised": ["2013", "7-String B", "Why Should I Be Surprised"], "the-getaway-theme": ["2009", "Drop C", "City of Distant Sirens"], "wild-heart": ["2019", "E", "Wild"], "moon": ["2021", "E", "Moon"], "sweet-sweet-love": ["2011", "Drop C", "Sweet Sweet Love"], "dirty-talk": ["2021", "Drop C", "Dirty Talk"], "talk-in-my-sleep": ["2011", "7-String Bb", "Talk in My Sleep"], "future-tripper": ["2020", "E", "Future Tripper"], "analog-exe": ["2025", "E", "Analog.EXE"], "stuffed-animal": ["2021", "E", "Stuffed Animal"], "ticket-to-hell": ["2023", "Drop C", "Sour"], "big-bang": ["2021", "Drop C", "EggNog"], "meteorites": ["2022", "E", "Meteorites"], "out": ["2023", "E", "Out"], "solarace": ["2009", "Drop C", "Solarace"], "down": ["2022", "D", "Orion"]};
   for (let i = songs.length - 1; i >= 0; i--) if (STRUCK.has(songs[i].id)) songs.splice(i, 1);
@@ -104,7 +282,11 @@ window.WBA_DATA = (() => {
     s.demoTitle = m[2] || "TBD";
     if (!s.instrumental) s.instrumental = null;
     if (!s.drumDemo) s.drumDemo = null;
+    const a = ANNO[s.id] || { themes: [], motifs: [], keyLine: "" };
+    s.themes = a.themes;
+    s.motifs = a.motifs;
+    s.keyLine = a.keyLine;
   });
 
-  return { MEMBERS, PHASES, VOX, SONGS: songs, CHAT_LYRICS_NOTE: CHAT };
+  return { MEMBERS, PHASES, VOX, SONGS: songs, THEMES, ALBUM_SUMMARY, HERO_LINES, CHAT_LYRICS_NOTE: CHAT };
 })();

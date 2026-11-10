@@ -26,8 +26,10 @@
     label: "Shared with the band — saves instantly for everyone.",
     async getAll() { return group(await req("reviews?select=*&order=ts.asc"), rev); },
     async addReview(songId, user, score, notes) {
+      const body = { song_id: songId, user, notes: String(notes || "").trim(),
+        score: (score === 1 || score === 2 || score === 3) ? score : null };
       await req("reviews", { method: "POST", headers: Object.assign({ Prefer: "return=minimal" }, H),
-        body: JSON.stringify({ song_id: songId, user, score, notes: String(notes || "").trim() }) });
+        body: JSON.stringify(body) });
       return group(await req("reviews?select=*&song_id=eq." + encodeURIComponent(songId) + "&order=ts.asc"), rev)[songId] || [];
     },
     async getStages() { return group(await req("stage_checks?select=*&order=ts.asc"), stg); },
