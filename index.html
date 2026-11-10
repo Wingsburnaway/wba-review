@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wings Burn Away · Exit Us</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="locked">
+
+<div id="splash" class="splash" role="dialog" aria-labelledby="splash-title" aria-modal="true">
+  <h1 id="splash-title" class="sr">Wings Burn Away — sign in</h1>
+  <img class="logo" src="assets/logo.jpg" alt="Wings Burn Away logo: engraved wings with flame and ash tips" width="1280" height="420">
+  <div class="album" aria-hidden="true"><span>EXIT US</span></div>
+  <form id="enter">
+    <label for="code">Enter your name</label>
+    <input id="code" name="code" type="text" autocomplete="username" autocapitalize="words" required>
+    <button type="submit">Enter</button>
+    <p id="gate-err" class="err" role="alert"></p>
+  </form>
+  <p class="fine">Access is by first name for the five of us. This is a simple gate, not strong security.</p>
+</div>
+
+<div id="app" hidden>
+  <div class="proof" role="note">BAND SITE · <b>SUNO DEMO CONFIRMED FOR THE ORIGINAL 16 ONLY</b> · OTHER STAGES UNKNOWN · NO TEAM SYNC YET</div>
+  <div class="bar-user"><span>Signed in as <b id="who">—</b></span><button type="button" class="signout" id="signout">Sign out</button></div>
+  <div class="storage-note" id="storage-label" role="status"></div>
+
+  <header class="hero">
+    <span class="corner c1" aria-hidden="true"></span><span class="corner c2" aria-hidden="true"></span>
+    <span class="corner c3" aria-hidden="true"></span><span class="corner c4" aria-hidden="true"></span>
+    <div class="hero-in">
+      <h1 class="sr">Wings Burn Away — Exit Us record tracker</h1>
+      <img class="logo" src="assets/logo.jpg" alt="Wings Burn Away logo: engraved wings with flame and ash tips" width="1280" height="420">
+      <div class="album" aria-label="Album: Exit Us"><span>EXIT US</span></div>
+      <p class="tag">Record tracker · <span id="song-count">21</span> songs · pre / prod / post / marketing</p>
+    </div>
+  </header>
+  <div class="cut" aria-hidden="true"></div>
+
+  <main class="wrap">
+    <section aria-label="Summary" class="stats">
+      <div class="stat"><div class="n" id="song-count-stat">21</div><div class="l">Songs in play</div></div>
+      <div class="stat"><div class="n s" id="suno-count">16/21</div><div class="l">Suno demos · confirmed</div></div>
+      <div class="stat"><div class="n s">Unknown</div><div class="l">All other stages</div></div>
+      <div class="stat"><div class="n s">TBD</div><div class="l">Vocalist · tracking on hold</div></div>
+    </section>
+    <nav aria-label="Open a section"><p class="kicker">Sections</p><div class="tiles" id="tiles"></div></nav>
+    <section aria-label="Breakout sections" id="breakouts"></section>
+  </main>
+  <div class="cut ox" aria-hidden="true"></div>
+  <footer>Wings Burn Away · Exit Us · statuses are read-only · reviews save on this device until a backend is connected.</footer>
+</div>
+
+<script src="data.js"></script>
+<script src="storage.js"></script>
+<script src="app.js"></script>
+<script>
+  document.getElementById("song-count-stat").textContent = window.WBA_DATA.SONGS.length;
+</script>
+</body>
+</html>
