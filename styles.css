@@ -144,6 +144,9 @@ th.grp,td.grp{border-left:1px solid var(--ink)}
 .ph{font:900 9px var(--sans);letter-spacing:.16em;text-transform:uppercase;margin:10px 0 2px;color:var(--ox)}
 .stages{list-style:none;padding:0;margin:0;columns:2;font-size:12px}
 .stages li{display:flex;align-items:center;gap:4px;break-inside:avoid;padding:1px 0}
+.stages label.chk{display:flex;align-items:center;gap:6px;cursor:pointer}
+.stages input[type=checkbox]{accent-color:var(--ox);width:14px;height:14px;margin:0;flex:none}
+.stage-log{margin-top:8px}
 
 .scores{display:flex;flex-direction:column;gap:6px;margin:10px 0}
 .scores label{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;border:1px solid #e1ddd2;padding:8px 10px}

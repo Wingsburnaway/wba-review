@@ -1,27 +1,31 @@
 /* Shared storage adapter.
    Now: localStorage on this device only.
    Later: change kind to "remote" and point endpoint at the chosen backend
-   (see README.md). Keep the same Reviews shape so the UI does not change. */
+   (see README.md). Keep the same Reviews and Stages shapes so the UI does not change. */
 (function (w) {
-  const KEY = "wba-exit-us-reviews-v1";
+  const REVIEW_KEY = "wba-exit-us-reviews-v1";
+  const STAGE_KEY = "wba-exit-us-stages-v1";
   /* Reviews shape:
      { [songId]: [ { user, score, notes, ts } ] }
      Newest entries are appended. The latest entry per user is their current review. */
+  /* Stages shape:
+     { [songId]: [ { stage, done, user, ts } ] }
+     Newest entries are appended. The latest entry for a stage is its current check. */
 
-  function load() {
-    try { return JSON.parse(localStorage.getItem(KEY) || "{}"); }
+  function load(key) {
+    try { return JSON.parse(localStorage.getItem(key) || "{}"); }
     catch { return {}; }
   }
-  function save(data) {
-    localStorage.setItem(KEY, JSON.stringify(data));
+  function save(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
   }
 
   w.WBAStorage = {
     kind: "local",
     label: "Saving on this device only — not shared with the band until a backend is connected.",
-    async getAll() { return load(); },
+    async getAll() { return load(REVIEW_KEY); },
     async addReview(songId, user, score, notes) {
-      const data = load();
+      const data = load(REVIEW_KEY);
       if (!data[songId]) data[songId] = [];
       data[songId].push({
         user,
@@ -29,7 +33,20 @@
         notes: String(notes || "").trim(),
         ts: new Date().toISOString()
       });
-      save(data);
+      save(REVIEW_KEY, data);
+      return data[songId];
+    },
+    async getStages() { return load(STAGE_KEY); },
+    async addStageCheck(songId, stage, done, user) {
+      const data = load(STAGE_KEY);
+      if (!data[songId]) data[songId] = [];
+      data[songId].push({
+        stage,
+        done: !!done,
+        user,
+        ts: new Date().toISOString()
+      });
+      save(STAGE_KEY, data);
       return data[songId];
     }
   };

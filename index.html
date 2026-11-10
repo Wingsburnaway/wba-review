@@ -22,7 +22,7 @@
 </div>
 
 <div id="app" hidden>
-  <div class="proof" role="note">BAND SITE · <b>SUNO DEMO CONFIRMED FOR THE ORIGINAL 16 ONLY</b> · OTHER STAGES UNKNOWN · NO TEAM SYNC YET</div>
+  <div class="proof" role="note" id="status-banner">BAND SITE · STATUSES CONFIRMED WHERE CHECKED OR ON FILE · NO TEAM SYNC YET</div>
   <div class="bar-user"><span>Signed in as <b id="who">—</b></span><button type="button" class="signout" id="signout">Sign out</button></div>
   <div class="storage-note" id="storage-label" role="status"></div>
 
@@ -41,15 +41,15 @@
   <main class="wrap">
     <section aria-label="Summary" class="stats">
       <div class="stat"><div class="n" id="song-count-stat">21</div><div class="l">Songs in play</div></div>
-      <div class="stat"><div class="n s" id="suno-count">16/21</div><div class="l">Suno demos · confirmed</div></div>
-      <div class="stat"><div class="n s">Unknown</div><div class="l">All other stages</div></div>
+      <div class="stat"><div class="n s" id="suno-count">—</div><div class="l">Suno demos · confirmed</div></div>
+      <div class="stat"><div class="n s" id="logic-count">—</div><div class="l">Logic import · confirmed</div></div>
       <div class="stat"><div class="n s">TBD</div><div class="l">Vocalist · tracking on hold</div></div>
     </section>
     <nav aria-label="Open a section"><p class="kicker">Sections</p><div class="tiles" id="tiles"></div></nav>
     <section aria-label="Breakout sections" id="breakouts"></section>
   </main>
   <div class="cut ox" aria-hidden="true"></div>
-  <footer>Wings Burn Away · Exit Us · statuses are read-only · reviews save on this device until a backend is connected.</footer>
+  <footer>Wings Burn Away · Exit Us · reviews and stage checks save on this device until a backend is connected.</footer>
 </div>
 
 <script src="data.js"></script>
