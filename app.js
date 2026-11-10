@@ -21,8 +21,18 @@
     return MEMBERS.find((m) => m.toLowerCase() === n) || null;
   };
 
-  let user = sessionStorage.getItem(userKey);
-  if (user && !MEMBERS.includes(user)) { sessionStorage.removeItem(userKey); user = null; }
+  const KEEP_MS = 30 * 24 * 60 * 60 * 1000; // stay signed in 30 days
+  function loadUser() {
+    try {
+      const v = JSON.parse(localStorage.getItem(userKey) || "null");
+      if (v && MEMBERS.includes(v.u) && v.exp > Date.now()) return v.u;
+    } catch (e) {}
+    localStorage.removeItem(userKey);
+    return null;
+  }
+  function saveUser(u) { localStorage.setItem(userKey, JSON.stringify({ u, exp: Date.now() + KEEP_MS })); }
+  let user = loadUser();
+  if (user) saveUser(user);
 
   function gate() {
     const splash = $("#splash");
@@ -51,12 +61,12 @@
       return;
     }
     user = found;
-    sessionStorage.setItem(userKey, user);
+    saveUser(user);
     err.textContent = "";
     gate();
   });
   $("#signout").addEventListener("click", () => {
-    sessionStorage.removeItem(userKey);
+    localStorage.removeItem(userKey);
     user = null;
     $("#code").value = "";
     gate();
