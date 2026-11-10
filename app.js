@@ -129,6 +129,7 @@
         <div><dt>Song</dt><dd>${esc(s.title)}</dd></div>
         <div><dt>Year written</dt><dd>${esc(s.year)}</dd></div>
         <div><dt>Tuning</dt><dd>${esc(s.tuning)}</dd></div>
+        <div><dt>Demo title</dt><dd>${esc(s.demoTitle || "TBD")}</dd></div>
       </dl>
       ${PHASES.map((p) => `<div class="barl"><span>${p.name}</span><span>${pct(s, p) ? pct(s, p) + "% confirmed" : "Unknown"}</span></div><div class="bar" role="img" aria-label="${p.name}: ${pl(s, p)}"><i style="width:${pct(s, p)}%"></i></div>`).join("")}
       <details class="brk"><summary>Lyrics</summary>${lyricsBlock(s)}</details>
