@@ -17,7 +17,8 @@
   };
   const defaultSt = (stage, song) => {
     if (stage === "Suno demo") return song.suno === "done" ? "done" : "unc";
-    if (stage === "Logic import") return song.instrumental ? "done" : "unc";
+    if (stage === "Logic import") return (song.instrumental || (song.media && (song.media.logic || song.media.inst))) ? "done" : "unc";
+    if (stage === "Click / guide") return song.media && song.media.click ? "done" : "unc";
     if (VOX.has(stage)) return "tbd";
     return "unc";
   };
@@ -208,6 +209,10 @@
       <tbody>${tableRows()}</tbody></table></div>`;
   }
 
+  function mediaRow(label, m, extra) {
+    if (!m || !m.url) return "";
+    return `<li><span>${label}</span><a href="${esc(m.url)}" target="_blank" rel="noopener" download>${esc(m.name)}${extra ? ` <small class="muted">${esc(extra)}</small>` : ""}</a></li>`;
+  }
   function dlRow(label, link, found) {
     if (link && link.url) return `<li><span>${label}</span><a href="${esc(link.url)}" target="_blank" rel="noopener">${esc(link.label)}</a></li>`;
     if (link && link.file) return `<li><span>${label}</span><span class="muted">On file at ${esc(link.file)}${link.label ? " · " + esc(link.label) : ""} (no public link yet)</span></li>`;
@@ -277,6 +282,130 @@
       ).join("")}</ul>`;
   }
 
+
+  /* ---------- Audio: one shared engine for card mini players + Playlist ---------- */
+  const PLAYLIST = SONGS.filter((s) => s.media && s.media.main && s.media.main.stream);
+  const NOAUDIO = SONGS.filter((s) => !(s.media && s.media.main && s.media.main.stream));
+  const audio = new Audio();
+  audio.preload = "none";
+  const durs = {};
+  let curId = null;
+  const ICON = {
+    play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/></svg>',
+    pause: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.5h4.2v15H6zM13.8 4.5H18v15h-4.2z" fill="currentColor"/></svg>',
+    prev: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5h2.6v14H5zM19.5 5v14L8.6 12z" fill="currentColor"/></svg>',
+    next: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 5H19v14h-2.6zM4.5 5v14L15.4 12z" fill="currentColor"/></svg>'
+  };
+  const tfmt = (t) => {
+    if (!isFinite(t) || t < 0) return "–:––";
+    const m = Math.floor(t / 60), sec = Math.floor(t % 60);
+    return m + ":" + String(sec).padStart(2, "0");
+  };
+  const byId = (id) => SONGS.find((s) => s.id === id);
+  function playSong(id, fromStart) {
+    const s = byId(id);
+    if (!s || !s.media.main) return;
+    if (curId !== id) {
+      curId = id;
+      audio.src = s.media.main.stream;
+      audio.currentTime = 0;
+    } else if (fromStart) audio.currentTime = 0;
+    const pr = audio.play();
+    if (pr && pr.catch) pr.catch(() => syncAudioUI());
+    if ("mediaSession" in navigator) {
+      try {
+        navigator.mediaSession.metadata = new MediaMetadata({ title: s.title, artist: "Wings Burn Away", album: "Exit Us" });
+      } catch (e) {}
+    }
+    syncAudioUI();
+  }
+  function toggleSong(id) {
+    if (curId === id && !audio.paused) { audio.pause(); return; }
+    playSong(id);
+  }
+  function step(dir) {
+    if (!PLAYLIST.length) return;
+    let i = PLAYLIST.findIndex((s) => s.id === curId);
+    if (dir < 0 && curId && audio.currentTime > 3) { audio.currentTime = 0; return; }
+    i = i < 0 ? 0 : (i + dir + PLAYLIST.length) % PLAYLIST.length;
+    playSong(PLAYLIST[i].id, true);
+  }
+  function seekFrac(f) {
+    if (!curId || !isFinite(audio.duration)) return;
+    audio.currentTime = Math.max(0, Math.min(1, f)) * audio.duration;
+  }
+  function syncAudioUI() {
+    const playing = !!curId && !audio.paused && !audio.ended;
+    const d = audio.duration, t = audio.currentTime;
+    const frac = curId && isFinite(d) && d > 0 ? t / d : 0;
+    if (curId && isFinite(d)) durs[curId] = d;
+    $$("[data-mini]").forEach((el) => {
+      const id = el.dataset.mini, on = id === curId;
+      el.classList.toggle("on", on);
+      el.classList.toggle("playing", on && playing);
+      const b = el.querySelector(".mp-btn");
+      if (b) { b.innerHTML = on && playing ? ICON.pause : ICON.play; b.setAttribute("aria-label", (on && playing ? "Pause " : "Play ") + el.dataset.title); }
+      const bar = el.querySelector(".mp-bar i");
+      if (bar) bar.style.width = (on ? frac * 100 : 0) + "%";
+      const tt = el.querySelector(".mp-t");
+      if (tt) tt.textContent = on ? tfmt(t) + " / " + tfmt(d) : (durs[id] ? tfmt(durs[id]) : "Original");
+    });
+    const pl = $("#pl");
+    if (!pl) return;
+    const s = curId ? byId(curId) : null;
+    pl.classList.toggle("playing", playing);
+    $("#pl-title").textContent = s ? s.title : "Press play to start the album";
+    $("#pl-sub").textContent = s ? `Track ${String(PLAYLIST.indexOf(s) + 1).padStart(2, "0")} of ${PLAYLIST.length} · ${s.media.main.name}` : `${PLAYLIST.length} tracks · originals only · in album order`;
+    const tg = $("#pl-toggle");
+    tg.innerHTML = playing ? ICON.pause : ICON.play;
+    tg.setAttribute("aria-label", playing ? "Pause" : "Play");
+    $("#pl-cur").textContent = tfmt(curId ? t : 0);
+    $("#pl-dur").textContent = curId ? tfmt(d) : "–:––";
+    const r = $("#pl-range");
+    if (r && !r.matches(":active")) { r.value = Math.round(frac * 1000); r.style.setProperty("--p", (frac * 100).toFixed(2) + "%"); }
+    $$("#pl [data-plrow]").forEach((row) => {
+      const on = row.dataset.plrow === curId;
+      row.classList.toggle("on", on);
+      row.setAttribute("aria-current", on ? "true" : "false");
+      const dd = row.querySelector(".d");
+      if (dd) dd.innerHTML = on && playing ? '<span class="eq" aria-label="Playing"><i></i><i></i><i></i></span>' : (durs[row.dataset.plrow] ? tfmt(durs[row.dataset.plrow]) : "");
+    });
+  }
+  ["play", "pause", "timeupdate", "loadedmetadata", "durationchange", "emptied"].forEach((ev) => audio.addEventListener(ev, syncAudioUI));
+  audio.addEventListener("ended", () => step(1));
+  if ("mediaSession" in navigator) {
+    try {
+      navigator.mediaSession.setActionHandler("previoustrack", () => step(-1));
+      navigator.mediaSession.setActionHandler("nexttrack", () => step(1));
+    } catch (e) {}
+  }
+  function miniPlayer(s) {
+    if (!s.media.main) return `<div class="mini none"><span class="mp-x">No streamable original on a shared link yet</span></div>`;
+    return `<div class="mini" data-mini="${esc(s.id)}" data-title="${esc(s.title)}">
+      <button class="mp-btn" type="button" data-mp="${esc(s.id)}" aria-label="Play ${esc(s.title)}">${ICON.play}</button>
+      <div class="mp-bar" data-mpseek="${esc(s.id)}" role="presentation"><i></i></div>
+      <span class="mp-t">Original</span></div>`;
+  }
+  function playlist() {
+    const rows = PLAYLIST.map((s, i) => `<li><button type="button" data-plrow="${esc(s.id)}" aria-current="false"><span class="i">${String(i + 1).padStart(2, "0")}</span><span class="t">${esc(s.title)}</span><span class="d"></span></button></li>`).join("");
+    const skipped = NOAUDIO.length ? `<p class="note pl-skip">Not in the playlist yet (no streamable file on a shared link): ${NOAUDIO.map((s) => esc(s.title)).join(", ")}.</p>` : "";
+    return `<div class="pl" id="pl">
+      <div class="pl-deck">
+        <img class="pl-em" src="assets/emblem-w.png" alt="" width="600" height="593">
+        <div class="pl-info"><div class="pl-k">Exit Us · now playing</div><div class="pl-title" id="pl-title"></div><div class="pl-sub" id="pl-sub"></div></div>
+        <div class="pl-ctrls">
+          <button type="button" class="pl-b" data-pl="prev" aria-label="Previous track">${ICON.prev}</button>
+          <button type="button" class="pl-b big" id="pl-toggle" data-pl="toggle" aria-label="Play">${ICON.play}</button>
+          <button type="button" class="pl-b" data-pl="next" aria-label="Next track">${ICON.next}</button>
+        </div>
+      </div>
+      <div class="pl-seek"><span id="pl-cur">0:00</span><input type="range" id="pl-range" min="0" max="1000" value="0" step="1" aria-label="Seek"><span id="pl-dur">–:––</span></div>
+      <ol class="pl-list">${rows}</ol>
+      ${skipped}
+      <p class="note">Full versions only — click and instrumental files live in each song card's Downloads. Streams from the band Dropbox; first play of a track can take a second to buffer.</p>
+    </div>`;
+  }
+
   function card(s, reviews) {
     const entries = (reviews[s.id] || []);
     return `<article class="card" id="song-${s.id}" data-song="${esc(s.title.toLowerCase())}">
@@ -288,13 +417,17 @@
         <div><dt>Tuning</dt><dd>${esc(s.tuning)}</dd></div>
         <div><dt>Demo title</dt><dd>${esc(s.demoTitle || "TBD")}</dd></div>
       </dl>
+      ${miniPlayer(s)}
       <div class="tally">${esc(songTally(entries).votes ? "Band score  " + songTally(entries).text : "No scores yet")}</div>
       ${PHASES.map((p) => `<div class="barl"><span>${p.name}</span><span>${pct(s, p) ? pct(s, p) + "% confirmed" : "Unknown"}</span></div><div class="bar" role="img" aria-label="${p.name}: ${pl(s, p)}"><i style="width:${pct(s, p)}%"></i></div>`).join("")}
       <details class="brk"><summary>Lyrics</summary>${lyricsBlock(s)}</details>
       <details class="brk"><summary>Downloads</summary>
         <ul class="dl">
           ${dlRow("Demo", s.demo, s.demoFound)}
-          ${dlRow("Instrumental", s.instrumental, s.instrumentalFound)}
+          ${mediaRow("Original", s.media.main, "pre-production mix")}
+          ${s.media.inst ? mediaRow("Instrumental", s.media.inst) : dlRow("Instrumental", s.instrumental, s.instrumentalFound)}
+          ${mediaRow("Click", s.media.click)}
+          ${mediaRow("Logic session", s.media.logic, s.media.logic && s.media.logic.mb ? `.logicx folder · zipped · ~${s.media.logic.mb >= 1000 ? (s.media.logic.mb / 1000).toFixed(1) + " GB" : s.media.logic.mb + " MB"}` : ".logicx folder · zipped")}
           ${dlRow("Drum demo", s.drumDemo, s.drumFound)}
         </ul>
       </details>
@@ -389,9 +522,10 @@
       <div class="motif-cloud">${cloud || `<span class="muted">No motifs on file.</span>`}</div>`;
   }
 
-  const open = new Set(["all", "songs"]);
+  const open = new Set(["all", "playlist", "songs"]);
   const SECS = () => [
     { id: "all", t: "All songs — overview", m: `${SONGS.length} songs · 19 stages`, b: grid },
+    { id: "playlist", t: "Playlist", m: `${PLAYLIST.length} tracks · originals`, b: playlist },
     { id: "songs", t: "Song cards", m: `${SONGS.length} cards`, b: () => cards(reviews) },
     { id: "lyrics-overview", t: "Lyrical overview", m: `${SONGS.length} songs · ${Object.keys(THEMES || {}).length} themes`, b: lyricalOverview },
     ...PHASES.map((p) => ({ id: p.id, t: p.name, m: p.id === "pre" ? `Suno ${countDone("Suno demo")}/${SONGS.length} · Logic ${countDone("Logic import")}/${SONGS.length}` : p.id === "prod" ? "Vocals on hold" : "Unknown", b: () => phase(p) })),
@@ -407,6 +541,7 @@
     T.innerHTML = secs.map((x, i) => `<button class="tile" type="button" data-sec="${x.id}" aria-expanded="false" aria-controls="body-${x.id}"><span class="n">${num(i)}</span><span class="t">${x.t}</span><span class="m">${x.m}</span></button>`).join("");
     bindDynamic();
     sync();
+    syncAudioUI();
   }
 
   function sync() {
@@ -447,6 +582,29 @@
   }
 
   document.addEventListener("click", (e) => {
+    const mp = e.target.closest("[data-mp]");
+    if (mp) { toggleSong(mp.dataset.mp); return; }
+    const ms = e.target.closest("[data-mpseek]");
+    if (ms) {
+      const r = ms.getBoundingClientRect();
+      const f = (e.clientX - r.left) / r.width;
+      if (ms.dataset.mpseek !== curId) {
+        playSong(ms.dataset.mpseek);
+        audio.addEventListener("loadedmetadata", () => seekFrac(f), { once: true });
+      } else seekFrac(f);
+      return;
+    }
+    const plb = e.target.closest("[data-pl]");
+    if (plb) {
+      const a = plb.dataset.pl;
+      if (a === "prev") step(-1);
+      else if (a === "next") step(1);
+      else if (!curId) step(0);
+      else audio.paused ? playSong(curId) : audio.pause();
+      return;
+    }
+    const plr = e.target.closest("[data-plrow]");
+    if (plr) { toggleSong(plr.dataset.plrow); return; }
     const s = e.target.closest("[data-sec]");
     if (s) {
       const id = s.dataset.sec;
@@ -500,6 +658,13 @@
       document.body.append(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 1000);
     }
+  });
+
+  document.addEventListener("input", (e) => {
+    if (e.target.id !== "pl-range") return;
+    const f = e.target.value / 1000;
+    e.target.style.setProperty("--p", (f * 100).toFixed(2) + "%");
+    seekFrac(f);
   });
 
   document.addEventListener("submit", async (e) => {
