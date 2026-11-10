@@ -141,14 +141,14 @@
     const mine = latestByUser(entries)[user];
     const log = (entries || []).slice().reverse();
     return `<form class="rev" data-rev="${s.id}">
-      <p class="muted">Reviewing as <b>${esc(user)}</b>. Scores and notes are kept on this device until a shared backend is connected.</p>
+      <p class="muted">Reviewing as <b>${esc(user)}</b>. Scores and notes are shared with the whole band.</p>
       <div class="scores" role="radiogroup" aria-label="Score">
         ${[3, 2, 1].map((n) => `<label><input type="radio" name="score-${s.id}" value="${n}" ${mine && mine.score === n ? "checked" : ""}> <strong>${n}</strong> — ${SCORE[n]}</label>`).join("")}
       </div>
       <label class="sr" for="notes-${s.id}">Notes</label>
       <textarea id="notes-${s.id}" placeholder="Notes">${mine ? esc(mine.notes) : ""}</textarea>
       <button class="btn save" type="submit">Save review</button>
-      <p class="note" data-saved hidden>Saved on this device.</p>
+      <p class="note" data-saved hidden>Saved for the band.</p>
       </form>
       <h4 class="ph">Log</h4>
       ${log.length ? `<ul class="log">${log.map((e) => `<li><span class="who">${esc(e.user)}</span><span class="when">${esc(fmt(e.ts))}</span><div><span class="score-pill">${e.score} · ${SCORE[e.score]}</span>${e.notes ? esc(e.notes) : "<span class='muted'>No notes</span>"}</div></li>`).join("")}</ul>` : `<p class="muted">No reviews yet.</p>`}`;
@@ -331,7 +331,8 @@
     const score = Number((form.querySelector("input[type=radio]:checked") || {}).value);
     if (!score) { alert("Pick a score first."); return; }
     const notes = form.querySelector("textarea").value;
-    reviews[id] = await window.WBAStorage.addReview(id, user, score, notes);
+    try { reviews[id] = await window.WBAStorage.addReview(id, user, score, notes); }
+    catch (err) { alert("Couldn't save your review. Check your connection and try again."); return; }
     const host = form.closest(".rev-body");
     const song = SONGS.find((s) => s.id === id);
     host.innerHTML = reviewForm(song, reviews[id]);
@@ -391,14 +392,15 @@
     if (user !== "Rob") { box.checked = !box.checked; return; }
     const id = box.dataset.stageSong;
     const stageName = box.dataset.stage;
-    stages[id] = await window.WBAStorage.addStageCheck(id, stageName, box.checked, user);
+    try { stages[id] = await window.WBAStorage.addStageCheck(id, stageName, box.checked, user); }
+    catch (err) { box.checked = !box.checked; alert("Couldn't save that check. Try again."); return; }
     refresh();
   });
 
   $("#storage-label").textContent = window.WBAStorage.label;
   $("#song-count").textContent = String(SONGS.length);
 
-  Promise.all([window.WBAStorage.getAll(), window.WBAStorage.getStages()]).then(([rev, stg]) => {
+  Promise.all([window.WBAStorage.getAll(), window.WBAStorage.getStages()]).catch(() => [{}, {}]).then(([rev, stg]) => {
     reviews = rev || {};
     stages = stg || {};
     updateHeroCounts();

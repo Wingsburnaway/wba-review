@@ -1,53 +1,40 @@
-/* Shared storage adapter.
-   Now: localStorage on this device only.
-   Later: change kind to "remote" and point endpoint at the chosen backend
-   (see README.md). Keep the same Reviews and Stages shapes so the UI does not change. */
+/* Shared storage adapter: Supabase (shared with the whole band).
+   Tables: reviews(song_id, user, score, notes, ts), stage_checks(song_id, stage, done, user, ts).
+   Shapes returned to the UI:
+     reviews: { [songId]: [ { user, score, notes, ts } ] }  (oldest first)
+     stages:  { [songId]: [ { stage, done, user, ts } ] }   (oldest first) */
 (function (w) {
-  const REVIEW_KEY = "wba-exit-us-reviews-v1";
-  const STAGE_KEY = "wba-exit-us-stages-v1";
-  /* Reviews shape:
-     { [songId]: [ { user, score, notes, ts } ] }
-     Newest entries are appended. The latest entry per user is their current review. */
-  /* Stages shape:
-     { [songId]: [ { stage, done, user, ts } ] }
-     Newest entries are appended. The latest entry for a stage is its current check. */
+  const URL = "https://pacygrdrbuqpwzlsihco.supabase.co/rest/v1/";
+  const KEY = "sb_publishable_BOHmCc-AFhEVp-foMQpO1A_xiGqpmRm";
+  const H = { apikey: KEY, Authorization: "Bearer " + KEY, "Content-Type": "application/json" };
 
-  function load(key) {
-    try { return JSON.parse(localStorage.getItem(key) || "{}"); }
-    catch { return {}; }
+  async function req(path, opts) {
+    const r = await fetch(URL + path, Object.assign({ headers: H }, opts || {}));
+    if (!r.ok) throw new Error("Save failed (" + r.status + "): " + (await r.text()));
+    return r.status === 204 ? null : r.json();
   }
-  function save(key, data) {
-    localStorage.setItem(key, JSON.stringify(data));
+  function group(rows, map) {
+    const out = {};
+    (rows || []).forEach((row) => { (out[row.song_id] = out[row.song_id] || []).push(map(row)); });
+    return out;
   }
+  const rev = (r) => ({ user: r.user, score: r.score, notes: r.notes || "", ts: r.ts });
+  const stg = (r) => ({ stage: r.stage, done: r.done, user: r.user, ts: r.ts });
 
   w.WBAStorage = {
-    kind: "local",
-    label: "Saving on this device only — not shared with the band until a backend is connected.",
-    async getAll() { return load(REVIEW_KEY); },
+    kind: "remote",
+    label: "Shared with the band — saves instantly for everyone.",
+    async getAll() { return group(await req("reviews?select=*&order=ts.asc"), rev); },
     async addReview(songId, user, score, notes) {
-      const data = load(REVIEW_KEY);
-      if (!data[songId]) data[songId] = [];
-      data[songId].push({
-        user,
-        score,
-        notes: String(notes || "").trim(),
-        ts: new Date().toISOString()
-      });
-      save(REVIEW_KEY, data);
-      return data[songId];
+      await req("reviews", { method: "POST", headers: Object.assign({ Prefer: "return=minimal" }, H),
+        body: JSON.stringify({ song_id: songId, user, score, notes: String(notes || "").trim() }) });
+      return group(await req("reviews?select=*&song_id=eq." + encodeURIComponent(songId) + "&order=ts.asc"), rev)[songId] || [];
     },
-    async getStages() { return load(STAGE_KEY); },
+    async getStages() { return group(await req("stage_checks?select=*&order=ts.asc"), stg); },
     async addStageCheck(songId, stage, done, user) {
-      const data = load(STAGE_KEY);
-      if (!data[songId]) data[songId] = [];
-      data[songId].push({
-        stage,
-        done: !!done,
-        user,
-        ts: new Date().toISOString()
-      });
-      save(STAGE_KEY, data);
-      return data[songId];
+      await req("stage_checks", { method: "POST", headers: Object.assign({ Prefer: "return=minimal" }, H),
+        body: JSON.stringify({ song_id: songId, stage, done: !!done, user }) });
+      return group(await req("stage_checks?select=*&song_id=eq." + encodeURIComponent(songId) + "&order=ts.asc"), stg)[songId] || [];
     }
   };
 })(window);
