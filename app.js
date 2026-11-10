@@ -97,26 +97,11 @@
     const host = $("#hero-frags");
     if (!host) return;
     const live = new Set(SONGS.map((s) => s.id));
-    const lines = (HERO_LINES || []).filter((h) => live.has(h.id));
-    const slots = [
-      { top: "8%", left: "-2%", rot: -8 },
-      { top: "14%", right: "2%", rot: 6 },
-      { top: "28%", left: "4%", rot: -3 },
-      { top: "38%", right: "-4%", rot: 9 },
-      { top: "52%", left: "-6%", rot: -11 },
-      { top: "62%", right: "6%", rot: 4 },
-      { top: "74%", left: "10%", rot: -6 },
-      { top: "6%", left: "32%", rot: 2 },
-      { bottom: "6%", left: "2%", rot: -4 },
-      { bottom: "10%", right: "8%", rot: 7 },
-      { top: "44%", left: "28%", rot: -2 },
-      { bottom: "22%", left: "36%", rot: 5 }
-    ];
-    host.innerHTML = lines.map((h, i) => {
-      const sl = slots[i % slots.length];
-      const pos = Object.entries(sl).filter(([k]) => k !== "rot").map(([k, v]) => `${k}:${v}`).join(";");
-      return `<span style="${pos};--rot:${sl.rot}deg">${esc(h.line)}</span>`;
-    }).join("");
+    const picks = [
+      { id: "when-the-love-runs-out", line: "When the love runs out", cls: "frag-a" },
+      { id: "down", line: "When it all comes down", cls: "frag-b" }
+    ].filter((h) => live.has(h.id));
+    host.innerHTML = picks.map((h) => `<span class="${h.cls}">${esc(h.line)}</span>`).join("");
   }
 
   const KEEP_MS = 30 * 24 * 60 * 60 * 1000; // stay signed in 30 days
