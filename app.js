@@ -398,7 +398,7 @@
     const skipped = NOAUDIO.length ? `<p class="note pl-skip">Not in the playlist yet (no streamable file on a shared link): ${NOAUDIO.map((s) => esc(s.title)).join(", ")}.</p>` : "";
     return `<div class="pl" id="pl">
       <div class="pl-deck">
-        <img class="pl-em" src="assets/emblem-w.png?v=202611110306" alt="" width="600" height="593">
+        <img class="pl-em" src="assets/emblem-w.png?v=202611110328" alt="" width="600" height="593">
         <div class="pl-info"><div class="pl-k">Exit Us · now playing</div><div class="pl-title" id="pl-title"></div><div class="pl-sub" id="pl-sub"></div></div>
         <div class="pl-ctrls">
           <button type="button" class="pl-b" data-pl="prev" aria-label="Previous track">${ICON.prev}</button>
@@ -489,12 +489,12 @@
     <h4 class="ph">Marks</h4>
     <div class="brand-grid">
       <figure class="bfig wide light"><img src="assets/brand/logo-ashwings.webp" alt="Wings Burn Away Ash Wings text logo" loading="lazy" width="960" height="540"><figcaption><b>Ash Wings logo</b><span>Primary text mark · never redrawn or scripted</span></figcaption></figure>
-      <figure class="bfig dark"><img class="em" src="assets/emblem-w.png?v=202611110306" alt="Winged W monogram" loading="lazy" width="600" height="593"><figcaption><b>Winged W</b><span>Monogram emblem · desk-doodle simple</span></figcaption></figure>
-      <figure class="bfig dark"><img class="em" src="assets/emblem-ghost.png?v=202611110306" alt="Ghost of Icarus hooded head emblem" loading="lazy" width="512" height="600"><figcaption><b>Ghost of Icarus</b><span>Outlined-hood head emblem</span></figcaption></figure>
+      <figure class="bfig dark"><img class="em" src="assets/emblem-w.png?v=202611110328" alt="Winged W monogram" loading="lazy" width="600" height="593"><figcaption><b>Winged W</b><span>Monogram emblem · desk-doodle simple</span></figcaption></figure>
+      <figure class="bfig dark"><img class="em" src="assets/emblem-ghost.png?v=202611110328" alt="Ghost of Icarus hooded head emblem" loading="lazy" width="512" height="600"><figcaption><b>Ghost of Icarus</b><span>Outlined-hood head emblem</span></figcaption></figure>
     </div>
     <h4 class="ph">Concept art</h4>
     <div class="brand-grid two-up">
-      <figure class="bfig dark"><img src="assets/brand/banner.webp?v=202611110306" alt="Banner art: the Ghost of Icarus standing on the EXIT US road under a flaming sky" loading="lazy" width="960" height="540"><figcaption><b>Exit Us banner</b><span>Ghost of Icarus on the road · top of this site</span></figcaption></figure>
+      <figure class="bfig dark"><img src="assets/brand/banner.webp?v=202611110328" alt="Banner art: the Ghost of Icarus standing on the EXIT US road under a flaming sky" loading="lazy" width="960" height="540"><figcaption><b>Exit Us banner</b><span>Ghost of Icarus on the road · top of this site</span></figcaption></figure>
       <figure class="bfig dark"><img src="assets/brand/wagon.webp" alt="Burned-out retro-futurist finned station wagon on a cracked wasteland" loading="lazy" width="960" height="540"><figcaption><b>The burned wagon</b><span>Retro-futurist concept · the future as the '50s saw it, wrecked</span></figcaption></figure>
     </div>
     <h4 class="ph">Lyric card art · ${cards.length} cards</h4>

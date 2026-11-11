@@ -219,7 +219,7 @@ button.signout:hover{background:var(--ink);color:var(--bone)}
 
 /* HERO ART + ATMOSPHERE */
 .hero-bg{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.hero-art{position:absolute;inset:-4%;background:url("assets/hero_art.jpg?v=202611110306") center 42% / cover no-repeat;animation:heroZoom 32s ease-in-out infinite alternate}
+.hero-art{position:absolute;inset:-4%;background:url("assets/hero_art.jpg?v=202611110328") center 42% / cover no-repeat;animation:heroZoom 32s ease-in-out infinite alternate}
 .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(11,11,11,.38) 0%,rgba(11,11,11,.12) 12%,rgba(11,11,11,.02) 28%,rgba(11,11,11,.02) 48%,rgba(11,11,11,.3) 78%,rgba(11,11,11,.84) 100%),radial-gradient(ellipse 90% 72% at 50% 42%,transparent 48%,rgba(11,11,11,.38) 100%)}
 .hero-grain{position:absolute;inset:0;opacity:.14;mix-blend-mode:overlay;background-image:repeating-radial-gradient(circle at 12% 18%,rgba(242,239,230,.2) 0 1px,transparent 1px 3px),repeating-radial-gradient(circle at 80% 70%,rgba(110,15,20,.18) 0 1px,transparent 1px 4px)}
 @keyframes heroZoom{from{transform:scale(1)}to{transform:scale(1.07)}}
