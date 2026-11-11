@@ -10,8 +10,11 @@
 
   async function req(path, opts) {
     const r = await fetch(URL + path, Object.assign({ headers: H }, opts || {}));
-    if (!r.ok) throw new Error("Save failed (" + r.status + "): " + (await r.text()));
-    return r.status === 204 ? null : r.json();
+    const text = await r.text();
+    if (!r.ok) throw new Error("Save failed (" + r.status + "): " + text);
+    /* Inserts use Prefer: return=minimal, so Supabase answers 201 Created with an EMPTY body.
+       Calling r.json() on that threw, which showed "Couldn't save" even though the row was saved. */
+    return text ? JSON.parse(text) : null;
   }
   function group(rows, map) {
     const out = {};
