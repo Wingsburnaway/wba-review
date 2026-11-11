@@ -426,7 +426,7 @@
       ${lc ? `<div class="lyr-row"><button type="button" class="lyr-btn" data-lyric="${esc(s.id)}" aria-haspopup="dialog">Lyrics</button></div>` : `<details class="brk"><summary>Lyrics</summary>${lyricsBlock(s)}</details>`}
       <details class="brk"><summary>Downloads</summary>
         <ul class="dl">
-          ${mediaRow("Original", s.media.main, "pre-production mix")}
+          ${mediaRow("Original", s.media.main, s.media.main && s.media.main.note ? s.media.main.note : "pre-production mix")}
           ${s.media.inst ? mediaRow("Instrumental", s.media.inst) : dlRow("Instrumental", s.instrumental, s.instrumentalFound)}
           ${mediaRow("Click", s.media.click)}
           ${mediaRow("Logic session", s.media.logic, s.media.logic && s.media.logic.mb ? `.logicx folder · zipped · ~${s.media.logic.mb >= 1000 ? (s.media.logic.mb / 1000).toFixed(1) + " GB" : s.media.logic.mb + " MB"}` : ".logicx folder · zipped")}
