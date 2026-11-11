@@ -55,7 +55,15 @@ window.WBA_CARDS = [
   { id: "on-the-rocks", palette: "rust-desert", value: "dusk", scene: "Tidal wave exploding over jagged black sea rocks",
     sky: "#301a12", scrim: "rgba(36,18,10,.7)", title: { l: 4, w: 64, t: 1.5 }, ly: { l: 4, r: 4, t: 19.0, cols: 3, fs: 1.18 }, mb: 0.72 },
   { id: "just-a-beautiful-mess", palette: "radium-green", value: "night", scene: "Glowing scrapyard heap of chrome tail fins and hubcaps",
-    sky: "#000607", scrim: "rgba(0,8,6,.5)", title: { l: 4, w: 84, t: 4 }, ly: { l: 5, r: 5, t: 21.1, cols: 2, fs: 1.65 }, mb: 0.78 }
+    sky: "#000607", scrim: "rgba(0,8,6,.5)", title: { l: 4, w: 84, t: 4 }, ly: { l: 5, r: 5, t: 21.1, cols: 2, fs: 1.65 }, mb: 0.78 },
+  { id: "hollywood-has-fallen", palette: "fallout-violet", value: "night", scene: "Darkened atomic-age Hollywood Hills mansion over the fallen sign, a tent encampment in the park below, flaming coral sky",
+    sky: "#2a173d", scrim: "rgba(30,14,44,.55)",
+    stanzas: [["Fading slowly", "You won’t show me", "Who you really are", "(Left in the dark)"],
+      ["Out of nowhere", "Yea, I’ve been there", "And I can tell when I’m bein", "(Left in the dark)"],
+      ["Mind your manners", "When your mansion’s", "left in the dark", "Just like the tents in the park", "When you’re left in the dark", "Just like the tents in the park"],
+      ["Think I can’t see you? (It’s true)", "Can’t trust a silhouette (that’s you)", "I’m done defining (defining)", "What my eyes see through you", "It’s nothing"],
+      ["Sole provider", "Hides the lighter", "When it’s needed most"],
+      ["Just like the tents in the park, left in the dark"]], title: { l: 4, w: 78, t: 2 }, ly: { l: 5, r: 5, t: 21.8, cols: 2, fs: 1.6 }, mb: 0.8 }
 ];
 
 // Each lyric section once: drop [labels]; remove any run of >=3 lines already sung earlier
@@ -108,7 +116,7 @@ window.lyricCardHTML = function (id, base) {
   if (!c || !s) return "";
   const esc = (t) => String(t).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
   const pal = P[c.palette];
-  const st = s.lyrics ? window.lyricsOnce(s.lyrics) : null;
+  const st = c.stanzas || (s.lyrics ? window.lyricsOnce(s.lyrics) : null); // c.stanzas: hand-deduped override when the auto pass misses a near-repeat
   const ly = c.ly;
   return `<article class="lc" id="lc-${c.id}" data-palette="${c.palette}" style="--sky:${c.sky};--glow:${pal.glow};--scrim:${c.scrim};--mb:${c.mb};--art:url(${base}art_${c.id}.webp)">
   <h2 style="--tl:${c.title.l}%;--tw:${c.title.w}%;--tt:${c.title.t}%"><img src="${base}title_${c.id}.webp" alt="${esc(s.title)}"></h2>

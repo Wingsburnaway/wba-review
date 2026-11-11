@@ -51,11 +51,17 @@
     const x = Math.round(avg * 100) / 100;
     return x.toFixed(2).replace(/\.?0+$/, "") || "0";
   };
+  /* Score privacy (Rob t115u): everyone except Rob sees only their OWN scores. Other members'
+     notes stay visible; only their score values are stripped. Client-side only: the rows are still
+     readable with the public anon key. */
+  const seesAll = () => user === "Rob";
+  const vis = (entries) => seesAll() ? (entries || []) : (entries || []).map((e) => (e.user === user ? e : Object.assign({}, e, { score: null })));
   const songTally = (entries) => {
-    const scores = Object.values(currentScores(entries));
+    const scores = Object.values(currentScores(vis(entries)));
     if (!scores.length) return { avg: null, votes: 0, text: "—" };
     const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
     const votes = scores.length;
+    if (!seesAll()) return { avg, votes, text: fmtAvg(avg) + " · " + (SCORE[avg] || "") };
     return { avg, votes, text: fmtAvg(avg) + " · " + votes + " vote" + (votes === 1 ? "" : "s") };
   };
   const statusRank = (status) => {
@@ -185,7 +191,7 @@
   function tableRows() {
     return sortedSongs().map((s) => {
       const tly = songTally(reviews[s.id]);
-      const scoreCell = tly.votes ? `${fmtAvg(tly.avg)} <span class="muted">· ${tly.votes}</span>` : "—";
+      const scoreCell = tly.votes ? (seesAll() ? `${fmtAvg(tly.avg)} <span class="muted">· ${tly.votes}</span>` : `${fmtAvg(tly.avg)} <span class="muted">· you</span>`) : "—";
       return `<tr data-song="${esc(s.title.toLowerCase())}"><td class="song"><button type="button" data-goto="${s.id}" aria-label="Open song card: ${esc(s.title)}"><span class="i">${String(s.n).padStart(2, "0")}</span>${esc(s.title)}</button></td><td class="score-col">${scoreCell}</td>${PHASES.map((p) => p.stages.map((x, i) =>
         `<td data-c="${p.id}" class="${i ? "" : "grp"} ${VOX.has(x) ? "dim" : ""}">${mk(st(x, s))}</td>`
       ).join("")).join("")}</tr>`;
@@ -203,7 +209,7 @@
       <div class="gridwrap" tabindex="0" role="region" aria-label="Song by stage table">
       <table id="tbl"><caption class="sr">All songs by pipeline stage</caption>
       <thead><tr class="ph"><th class="song"></th><th class="score-col"></th>${PHASES.map((p) => `<th colspan="${p.stages.length}" class="${p.id} grp" data-c="${p.id}">${p.name}</th>`).join("")}</tr>
-      <tr>${sortHeader("n", "Song", "song")}${sortHeader("score", "Score", "score-col")}${PHASES.map((p) => p.stages.map((s, i) =>
+      <tr>${sortHeader("n", "Song", "song")}${sortHeader("score", seesAll() ? "Score" : "Your score", "score-col")}${PHASES.map((p) => p.stages.map((s, i) =>
         sortHeader("stage:" + s, s, (i ? "" : "grp ") + (VOX.has(s) ? "dim" : ""), `data-c="${p.id}"`, VOX.has(s) ? "<small>Vox TBD</small>" : "")
       ).join("")).join("")}</tr></thead>
       <tbody>${tableRows()}</tbody></table></div>`;
@@ -227,7 +233,7 @@
   }
 
   function reviewLog(entries) {
-    const list = (entries || []).slice().reverse();
+    const list = vis(entries).slice().reverse();
     const items = list.map((e) => {
       const notes = String(e.notes || "").trim();
       const scored = isScore(e.score);
@@ -242,16 +248,16 @@
     return `<h4 class="ph">Log</h4><ul class="log">${items.join("")}</ul>`;
   }
   function currentScoresLine(entries) {
-    const scores = currentScores(entries);
+    const scores = currentScores(vis(entries));
     const names = Object.keys(scores);
     if (!names.length) return "";
     const bits = names.map((name) => `<span class="cs">${esc(name)} <span class="score-pill">${scores[name]} · ${SCORE[scores[name]]}</span></span>`);
-    return `<p class="current-scores"><b>Current scores</b> ${bits.join("")}</p>`;
+    return `<p class="current-scores"><b>${seesAll() ? "Current scores" : "Your score"}</b> ${bits.join("")}</p>`;
   }
   function reviewForm(s, entries) {
     const mine = currentScores(entries)[user];
     return `<form class="rev" data-rev="${s.id}">
-      <p class="muted">Reviewing as <b>${esc(user)}</b>. Add notes anytime. Your score can be changed, but only your latest score counts in the tally.</p>
+      <p class="muted">Reviewing as <b>${esc(user)}</b>. Add notes anytime. Your score can be changed, but only your latest score counts in the tally.${seesAll() ? "" : " Other members' scores stay hidden until the record is put together; their notes still show."}</p>
       <div class="scores" role="radiogroup" aria-label="Score">
         ${[3, 2, 1].map((n) => `<label><input type="radio" name="score-${s.id}" value="${n}" ${mine === n ? "checked" : ""}> <strong>${n}</strong> — ${SCORE[n]}</label>`).join("")}
       </div>
@@ -421,7 +427,7 @@
         <div><dt>Demo title</dt><dd>${esc(s.demoTitle || "TBD")}</dd></div>
       </dl>
       ${miniPlayer(s)}
-      <div class="tally">${esc(songTally(entries).votes ? "Band score  " + songTally(entries).text : "No scores yet")}</div>
+      <div class="tally">${esc(songTally(entries).votes ? (seesAll() ? "Band score  " : "Your score  ") + songTally(entries).text : (seesAll() ? "No scores yet" : "You haven't scored this yet"))}</div>
       ${PHASES.map((p) => `<div class="barl"><span>${p.name}</span><span>${pct(s, p) ? pct(s, p) + "% confirmed" : "Unknown"}</span></div><div class="bar" role="img" aria-label="${p.name}: ${pl(s, p)}"><i style="width:${pct(s, p)}%"></i></div>`).join("")}
       ${lc ? `<div class="lyr-row"><button type="button" class="lyr-btn" data-lyric="${esc(s.id)}" aria-haspopup="dialog">Lyrics</button></div>` : `<details class="brk"><summary>Lyrics</summary>${lyricsBlock(s)}</details>`}
       <details class="brk"><summary>Downloads</summary>
@@ -679,7 +685,7 @@
       const headRow = $("#tbl thead tr:last-child");
       if (headRow) {
         const rebuilt = document.createElement("tr");
-        rebuilt.innerHTML = `${sortHeader("n", "Song", "song")}${sortHeader("score", "Score", "score-col")}${PHASES.map((p) => p.stages.map((s, i) =>
+        rebuilt.innerHTML = `${sortHeader("n", "Song", "song")}${sortHeader("score", seesAll() ? "Score" : "Your score", "score-col")}${PHASES.map((p) => p.stages.map((s, i) =>
           sortHeader("stage:" + s, s, (i ? "" : "grp ") + (VOX.has(s) ? "dim" : ""), `data-c="${p.id}"`, VOX.has(s) ? "<small>Vox TBD</small>" : "")
         ).join("")).join("")}`;
         headRow.replaceWith(rebuilt);
@@ -691,10 +697,10 @@
     const p = e.target.closest("[data-ph]");
     if (p) { setPh(p.dataset.ph); return; }
     if (e.target.id === "csv") {
-      const rows = [["Song", "Year written", "Tuning", "Score", "Votes", ...PHASES.flatMap((p) => p.stages.map((s) => p.name + ": " + s))]];
+      const rows = [["Song", "Year written", "Tuning", seesAll() ? "Score" : "Your score", seesAll() ? "Votes" : "", ...PHASES.flatMap((p) => p.stages.map((s) => p.name + ": " + s))]];
       SONGS.forEach((s) => {
         const tly = songTally(reviews[s.id]);
-        rows.push([s.title, s.year, s.tuning, tly.votes ? fmtAvg(tly.avg) : "", tly.votes || "", ...PHASES.flatMap((p) => p.stages.map((x) => LBL[st(x, s)]))]);
+        rows.push([s.title, s.year, s.tuning, tly.votes ? fmtAvg(tly.avg) : "", seesAll() ? (tly.votes || "") : "", ...PHASES.flatMap((p) => p.stages.map((x) => LBL[st(x, s)]))]);
       });
       const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
       const a = document.createElement("a");
