@@ -1,5 +1,6 @@
 (function () {
   const { MEMBERS, PHASES, VOX, SONGS, CHAT_LYRICS_NOTE, THEMES, ALBUM_SUMMARY, HERO_LINES } = window.WBA_DATA;
+  const NSTAGES = PHASES.reduce((n, p) => n + p.stages.length, 0);
   const SCORE = { 3: "Please yes", 2: "Sure", 1: "Don't feel it" };
   const LBL = { done: "Done (confirmed)", unc: "Unknown", tbd: "On hold — vocalist TBD" };
 
@@ -200,12 +201,12 @@
   function grid() {
     return `<div class="controls" role="search"><label class="sr" for="q">Search songs</label><input id="q" type="search" placeholder="Search songs…" autocomplete="off">
       <span role="group" aria-label="Show phase columns">${["pre", "prod", "post", "all"].map((id) =>
-        `<button class="btn" type="button" data-ph="${id}" aria-pressed="${id === "pre"}">${id === "all" ? "All 19 stages →" : PHASES.find((p) => p.id === id).name}</button>`
+        `<button class="btn" type="button" data-ph="${id}" aria-pressed="${id === "pre"}">${id === "all" ? `All ${NSTAGES} stages →` : PHASES.find((p) => p.id === id).name}</button>`
       ).join(" ")}</span>
       <button class="btn" type="button" id="csv">Download CSV</button>
       <span id="cnt" aria-live="polite"></span></div>
       ${LEG}
-      <p id="scrollnote" class="note" hidden>All 19 stages: the table scrolls sideways → song names stay pinned.</p>
+      <p id="scrollnote" class="note" hidden>All ${NSTAGES} stages: the table scrolls sideways → song names stay pinned.</p>
       <div class="gridwrap" tabindex="0" role="region" aria-label="Song by stage table">
       <table id="tbl"><caption class="sr">All songs by pipeline stage</caption>
       <thead><tr class="ph"><th class="song"></th><th class="score-col"></th>${PHASES.map((p) => `<th colspan="${p.stages.length}" class="${p.id} grp" data-c="${p.id}">${p.name}</th>`).join("")}</tr>
@@ -475,10 +476,31 @@
     ${["Pick the singles (cut the list → final tracklist)", "Vocalist search: brief, auditions, decision", "Exit Us cover art + single artwork", "Press photos (band + new singer)", "Release plan, dates, distributor", "Socials: handles, bios, posting calendar", "Video: lyric videos + one hero video", "Press kit / one-sheet (“The Alone” angle)", "Website + link-in-bio", "First merch run"].map((x) => `<li><b>${x}</b><span>Proposed</span></li>`).join("")}</ul></div>
     <div class="panel"><div class="badge">Proposed</div><div class="big" style="font-size:20px">Crossover goal</div><p class="lead" style="margin-top:8px">Younger singer, same alt-rock / emo-pop spine. Lean on “The Alone” listeners.</p></div></div>`;
 
-  const ART = `<div class="two"><div><p class="lead">Build everything around the Ash Wings logo: engraved wings, flame and ash tips, heavy geometric sans. Black, bone, oxblood. Hairline frames, angular cuts.</p>
+  /* Artwork / brand showcase (Nov 11, 2026): only existing site art. Lyric thumbs open the lyric card. */
+  function ART() {
+    const cards = (window.WBA_CARDS || []).map((c) => SONGS.find((x) => x.id === c.id)).filter(Boolean).sort((a, b) => a.n - b.n);
+    const P = window.WBA_PALETTES || {};
+    const thumbs = cards.map((s) => {
+      const c = window.WBA_CARDS.find((x) => x.id === s.id);
+      return `<button type="button" class="bth" data-lyric="${esc(s.id)}" aria-haspopup="dialog" aria-label="Open the ${esc(s.title)} lyric card"><img src="assets/brand/th_${esc(s.id)}.webp" alt="" loading="lazy" width="216" height="288"><span class="bn">${String(s.n).padStart(2, "0")}</span><span class="bt">${esc(s.title)}</span><span class="bp" style="--g:${(P[c.palette] || {}).glow || "#888"}">${esc((P[c.palette] || {}).name || "")}</span></button>`;
+    }).join("");
+    return `<p class="lead">Every mark and concept piece in use on this site. Black, bone, oxblood; hairline frames; marks must hold up in pure black &amp; white.</p>
     <div class="sw"><div style="background:#0b0b0b;color:#F2EFE6">BLACK</div><div style="background:#F2EFE6">BONE #F2EFE6</div><div style="background:#6E0F14;color:#F2EFE6">OXBLOOD #6E0F14</div></div>
-    <ul class="list"><li><b>Logo</b><span>Ash Wings — never redrawn or scripted</span></li><li><b>Type</b><span>Heavy geometric sans, uppercase</span></li><li><b>Line</b><span>Hairline frames, corner marks</span></li><li><b>Accent</b><span>Oxblood, used sparingly</span></li><li><b>Test</b><span>Must work in pure black &amp; white</span></li></ul></div>
-    <div><img class="logo-sm" src="assets/logo.jpg" alt="Ash Wings logo, reference"><p class="note" style="margin-top:8px">Primary mark · use on white or bone.</p></div></div>`;
+    <h4 class="ph">Marks</h4>
+    <div class="brand-grid">
+      <figure class="bfig wide light"><img src="assets/brand/logo-ashwings.webp" alt="Wings Burn Away Ash Wings text logo" loading="lazy" width="960" height="540"><figcaption><b>Ash Wings logo</b><span>Primary text mark · never redrawn or scripted</span></figcaption></figure>
+      <figure class="bfig dark"><img class="em" src="assets/emblem-w.png" alt="Winged W monogram" loading="lazy" width="600" height="593"><figcaption><b>Winged W</b><span>Monogram emblem · desk-doodle simple</span></figcaption></figure>
+      <figure class="bfig dark"><img class="em" src="assets/emblem-ghost.png" alt="Ghost of Icarus hooded head emblem" loading="lazy" width="512" height="600"><figcaption><b>Ghost of Icarus</b><span>Outlined-hood head emblem</span></figcaption></figure>
+    </div>
+    <h4 class="ph">Concept art</h4>
+    <div class="brand-grid two-up">
+      <figure class="bfig dark"><img src="assets/brand/banner.webp" alt="Banner art: the Ghost of Icarus standing on the EXIT US road under a flaming sky" loading="lazy" width="960" height="540"><figcaption><b>Exit Us banner</b><span>Ghost of Icarus on the road · top of this site</span></figcaption></figure>
+      <figure class="bfig dark"><img src="assets/brand/wagon.webp" alt="Burned-out retro-futurist finned station wagon on a cracked wasteland" loading="lazy" width="960" height="540"><figcaption><b>The burned wagon</b><span>Retro-futurist concept · the future as the '50s saw it, wrecked</span></figcaption></figure>
+    </div>
+    <h4 class="ph">Lyric card art · ${cards.length} cards</h4>
+    <p class="note">One landscape per song from the same burned-out world. Tap a card to open its lyrics.</p>
+    <div class="bthumbs">${thumbs}</div>`;
+  }
 
   function themeStats() {
     const counts = {};
@@ -532,13 +554,13 @@
 
   const open = new Set(["all", "playlist", "songs"]);
   const SECS = () => [
-    { id: "all", t: "All songs — overview", m: `${SONGS.length} songs · 19 stages`, b: grid },
+    { id: "all", t: "All songs — overview", m: `${SONGS.length} songs · ${NSTAGES} stages`, b: grid },
     { id: "songs", t: "Song cards", m: `${SONGS.length} cards`, b: () => cards(reviews) },
     { id: "playlist", t: "Playlist", m: `${PLAYLIST.length} tracks · originals`, b: playlist },
     { id: "lyrics-overview", t: "Lyrical overview", m: `${SONGS.length} songs · ${Object.keys(THEMES || {}).length} themes`, b: lyricalOverview },
     ...PHASES.map((p) => ({ id: p.id, t: p.name, m: p.id === "pre" ? `Suno ${countDone("Suno demo")}/${SONGS.length} · Logic ${countDone("Logic import")}/${SONGS.length}` : p.id === "prod" ? "Vocals on hold" : "Unknown", b: () => phase(p) })),
     { id: "mkt", t: "Marketing", m: "10 proposed to-dos", b: () => MKT },
-    { id: "art", t: "Artwork / brand", m: "Ash Wings · Ink & Paper", b: () => ART }
+    { id: "art", t: "Artwork / brand", m: `Marks · concept art · ${(window.WBA_CARDS || []).length} lyric cards`, b: ART }
   ];
 
   /* ---------- Lyric cards: lazy faded backgrounds + modal ---------- */
