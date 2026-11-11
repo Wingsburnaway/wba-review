@@ -494,7 +494,7 @@
     </div>
     <h4 class="ph">Concept art</h4>
     <div class="brand-grid two-up">
-      <figure class="bfig dark"><img src="assets/brand/banner.webp" alt="Banner art: the Ghost of Icarus standing on the EXIT US road under a flaming sky" loading="lazy" width="960" height="540"><figcaption><b>Exit Us banner</b><span>Ghost of Icarus on the road · top of this site</span></figcaption></figure>
+      <figure class="bfig dark"><img src="assets/brand/banner.webp?v=202611110305" alt="Banner art: the Ghost of Icarus standing on the EXIT US road under a flaming sky" loading="lazy" width="960" height="540"><figcaption><b>Exit Us banner</b><span>Ghost of Icarus on the road · top of this site</span></figcaption></figure>
       <figure class="bfig dark"><img src="assets/brand/wagon.webp" alt="Burned-out retro-futurist finned station wagon on a cracked wasteland" loading="lazy" width="960" height="540"><figcaption><b>The burned wagon</b><span>Retro-futurist concept · the future as the '50s saw it, wrecked</span></figcaption></figure>
     </div>
     <h4 class="ph">Lyric card art · ${cards.length} cards</h4>
