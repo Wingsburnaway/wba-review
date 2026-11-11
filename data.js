@@ -552,10 +552,10 @@ window.WBA_DATA = (() => {
       lyricsStatus: "present", lyrics: "The smoke is a blowin’\nThey better know that you’re a rising star\n\nThe proof’s in the puddin’\nShades indoors, cocaine and fancy cars\n\n(Then It all. Comes. Down.)\n\nPack your bags we’re heading down below\nBetter grab what you can, it’ll be a while, nobody knows\nYou gotta Hold on tight, the floor is about to drop\nWhen it all comes down (it all comes down)\nit all comes down, you don’t wanna be on top\n\nWhen it all comes down (it all comes down)\nit all comes down, you don’t wanna be on top\n\nThe makin’s in the fakin’\nBig contracts, Cadillacs, all gone in a day\nBetter get with the gettin’\nAnd sell your soul if you got one to give away\n\n(Then It all. Comes. Down.)\n\nPack your bags we’re heading down below\nBetter grab what you can, it’ll be a while, nobody knows\nYou gotta Hold on tight, the floor is about to drop\nWhen it all comes down (it all comes down)\nit all comes down, you don’t wanna be on top\n\n(Then It all. Comes. Down.)\n\nPack your bags we’re heading down below\nBetter grab what you can, it’ll be a while, nobody knows\nYou gotta Hold on tight, the floor is about to drop\nWhen it all comes down (it all comes down)\nit all comes down, you don’t wanna be on top" },
     { id: "on-the-rocks", title: "On the Rocks", suno: "done",
       lyricsStatus: "present", lyrics: "There are no more words to say\nAnd don't think you can crawl away\nThis aint what you came for\nBut now its what you're paying for\n\nCan't see it from our view\nTo paint a picture we'll be erasing you\nReplacing you with a broken stick man\n\nYou can't hide\nWe're gonna find you\nDon't you forget\nOr we'll come remind you\n\nIt aint a secret\nCuz money talks\n\nTake us on the rocks\nAnd you will wake up shaken and stirred\nOn the rocks\nYou're gonna get yourself served\nEvery last drop kick you deserve\n\nYou're kissing the ground, you've got\nOne more round\n\nFarewell from us today\nAnd don't think you can crawl away\nBounced twice and a third'd be nice\nHave your eyes been betrayed?\nNo this is very real\nYour sleight of hand can't beat what we deal\nYou're out line you're out of time\nAnd you're out of luck\n\nYou cant run\nWe'll set the hounds on you\nDare you to try\nWe'll throw it down on you\nSo take us on the rocks\nAnd crush it cold to your face\n\nSomeone comes chasing\nWhen money walks\n\nTake us on the rocks\nAnd you will wake up shaken and stirred\nOn the rocks\nYou're gonna get yourself served\nEvery last drop kick you deserve\n\nAnd I, I really really hope this is getting through\nCause I don't know what you want from me\nBut now I know what I want from you\nKiss the ground, kiss your change on the ground\nKiss the cold dirt and don't come back around\nUnless you're ready to take all of us down\n\nI don't know what you want from me\nBut now I know what I want from you\n\nTake us on the rocks\nAnd you will wake up shaken and stirred\nOn the rocks\nYou're gonna get yourself served\nEvery last drop kick you deserve" },
-    /* Added Nov 10, 2026 (Rob t109u). Files in /EMO/PRE PRODUCTION. No lyrics found in Dropbox or on the box. */
+    /* Added Nov 10, 2026 (Rob t109u). Files in /EMO/PRE PRODUCTION. Lyrics sent by Rob Nov 10, 2026 (bracketed labels stripped). */
     { id: "just-a-beautiful-mess", title: "Just A Beautiful Mess", suno: "done",
       demoFound: { file: "/EMO/Just a Beautiful Mess.mp3", note: "Older demo at /EMO root, not in a shared folder." },
-      lyricsStatus: "missing", lyrics: "" },
+      lyricsStatus: "present", lyrics: "It's always the same, babe\nI wake up next to you to another useless day\nIt never changes, dear\nI can't help the fact that we will fall apart if you stay here\n\nI cannot be held by your charm, not anymore\nYou're out of my head\nI cannot hold you in my arms, cause I need more\nThan Just a beautiful mess\n\nIt's always a chase, love\nI fought for you when I was not the one you're thinking of\nNow it is all said and done\nWhen the words fell from my lips I knew you're not the one\n\nI cannot be held by your charm, not anymore\nYou're out of my head\nI cannot hold you in my arms, cause I need more\nThan Just a beautiful mess\n\nSo what if we try if it's not meant to be (meant to be)\nthis mess of a life won't become part of me\n\nI cannot be held by your charm, not anymore\nYou're out of my head\nI cannot hold you in my arms, cause I need more\nThan Just a beautiful mess" },
   ];
 
 
@@ -723,6 +723,11 @@ window.WBA_DATA = (() => {
       themes: ["descent", "illusion", "fate"],
       motifs: ["smoke", "rising star", "the floor dropping", "Cadillacs"],
       keyLine: "it all comes down, you don’t wanna be on top"
+    },
+    "just-a-beautiful-mess": {
+      themes: ["love-lost", "leaving", "cycles"],
+      motifs: ["the same useless day", "charm", "the chase", "a beautiful mess"],
+      keyLine: "I need more than just a beautiful mess"
     }
   };
 

@@ -408,7 +408,10 @@
 
   function card(s, reviews) {
     const entries = (reviews[s.id] || []);
-    return `<article class="card" id="song-${s.id}" data-song="${esc(s.title.toLowerCase())}">
+    const lc = window.hasLyricCard && window.hasLyricCard(s.id);
+    const lcfg = lc ? window.WBA_CARDS.find((x) => x.id === s.id) : null;
+    return `<article class="card${lc ? " has-art" : ""}" id="song-${s.id}" data-song="${esc(s.title.toLowerCase())}">
+      ${lc ? `<div class="card-bg" data-bg="assets/lyrics/bg_${esc(s.id)}.webp" style="--card-sky:${lcfg.sky}" aria-hidden="true"></div>` : ""}
       <span class="num" aria-hidden="true">${String(s.n).padStart(2, "0")}</span>
       <h3>${esc(s.title)}</h3>
       <dl class="meta">
@@ -420,10 +423,9 @@
       ${miniPlayer(s)}
       <div class="tally">${esc(songTally(entries).votes ? "Band score  " + songTally(entries).text : "No scores yet")}</div>
       ${PHASES.map((p) => `<div class="barl"><span>${p.name}</span><span>${pct(s, p) ? pct(s, p) + "% confirmed" : "Unknown"}</span></div><div class="bar" role="img" aria-label="${p.name}: ${pl(s, p)}"><i style="width:${pct(s, p)}%"></i></div>`).join("")}
-      <details class="brk"><summary>Lyrics</summary>${lyricsBlock(s)}</details>
+      ${lc ? `<div class="lyr-row"><button type="button" class="lyr-btn" data-lyric="${esc(s.id)}" aria-haspopup="dialog">Lyrics</button></div>` : `<details class="brk"><summary>Lyrics</summary>${lyricsBlock(s)}</details>`}
       <details class="brk"><summary>Downloads</summary>
         <ul class="dl">
-          ${dlRow("Demo", s.demo, s.demoFound)}
           ${mediaRow("Original", s.media.main, "pre-production mix")}
           ${s.media.inst ? mediaRow("Instrumental", s.media.inst) : dlRow("Instrumental", s.instrumental, s.instrumentalFound)}
           ${mediaRow("Click", s.media.click)}
@@ -440,7 +442,7 @@
   }
 
   function cards(reviews) {
-    return `<p class="lead">Open any breakout on a card for lyrics, downloads, reviews, or the pipeline. Bars fill with confirmed work only — empty means unknown, not zero.${user === "Rob" ? " As Rob, you can check stages off in the pipeline breakout; each check is logged like a review." : ""}</p>
+    return `<p class="lead">Tap Lyrics on a card to open its lyric card. Open any other breakout for downloads, reviews, or the pipeline. Bars fill with confirmed work only — empty means unknown, not zero.${user === "Rob" ? " As Rob, you can check stages off in the pipeline breakout; each check is logged like a review." : ""}</p>
       <div class="songs" id="cards">${SONGS.map((s) => card(s, reviews)).join("")}</div>`;
   }
 
@@ -525,13 +527,53 @@
   const open = new Set(["all", "playlist", "songs"]);
   const SECS = () => [
     { id: "all", t: "All songs — overview", m: `${SONGS.length} songs · 19 stages`, b: grid },
-    { id: "playlist", t: "Playlist", m: `${PLAYLIST.length} tracks · originals`, b: playlist },
     { id: "songs", t: "Song cards", m: `${SONGS.length} cards`, b: () => cards(reviews) },
+    { id: "playlist", t: "Playlist", m: `${PLAYLIST.length} tracks · originals`, b: playlist },
     { id: "lyrics-overview", t: "Lyrical overview", m: `${SONGS.length} songs · ${Object.keys(THEMES || {}).length} themes`, b: lyricalOverview },
     ...PHASES.map((p) => ({ id: p.id, t: p.name, m: p.id === "pre" ? `Suno ${countDone("Suno demo")}/${SONGS.length} · Logic ${countDone("Logic import")}/${SONGS.length}` : p.id === "prod" ? "Vocals on hold" : "Unknown", b: () => phase(p) })),
     { id: "mkt", t: "Marketing", m: "10 proposed to-dos", b: () => MKT },
     { id: "art", t: "Artwork / brand", m: "Ash Wings · Ink & Paper", b: () => ART }
   ];
+
+  /* ---------- Lyric cards: lazy faded backgrounds + modal ---------- */
+  let bgObs = null;
+  function lazyBgs() {
+    const els = $$(".card-bg[data-bg]");
+    const load = (el) => { const u = el.dataset.bg; el.removeAttribute("data-bg"); const im = new Image(); im.onload = () => { el.style.backgroundImage = `url(${u})`; el.classList.add("in"); }; im.src = u; };
+    if (!("IntersectionObserver" in window)) { els.forEach(load); return; }
+    if (bgObs) bgObs.disconnect();
+    bgObs = new IntersectionObserver((ents) => ents.forEach((en) => { if (en.isIntersecting) { bgObs.unobserve(en.target); load(en.target); } }), { rootMargin: "300px 0px" });
+    els.forEach((el) => bgObs.observe(el));
+  }
+  let lcDlg = null, lcReturn = null;
+  function lyricModal() {
+    if (lcDlg) return lcDlg;
+    lcDlg = document.createElement("dialog");
+    lcDlg.className = "lc-modal";
+    lcDlg.setAttribute("aria-label", "Lyric card");
+    lcDlg.innerHTML = `<button type="button" class="lc-x" aria-label="Close lyrics">✕</button><div class="lc-wrap"></div>`;
+    document.body.append(lcDlg);
+    lcDlg.addEventListener("click", (e) => {
+      if (e.target.closest(".lc-x") || !e.target.closest(".lc")) lcDlg.close();
+    });
+    lcDlg.addEventListener("close", () => {
+      document.body.classList.remove("lc-lock");
+      lcDlg.querySelector(".lc-wrap").innerHTML = "";
+      if (lcReturn) { lcReturn.focus({ preventScroll: true }); lcReturn = null; }
+    });
+    return lcDlg;
+  }
+  function openLyric(id, from) {
+    const d = lyricModal();
+    const s = byId(id);
+    d.setAttribute("aria-label", (s ? s.title : "Song") + " lyric card");
+    d.querySelector(".lc-wrap").innerHTML = window.lyricCardHTML(id, "assets/lyrics/");
+    lcReturn = from || null;
+    document.body.classList.add("lc-lock");
+    if (typeof d.showModal === "function") d.showModal(); else d.setAttribute("open", "");
+    d.scrollTop = 0;
+    d.querySelector(".lc-x").focus({ preventScroll: true });
+  }
 
   function paintBreakouts() {
     const secs = SECS();
@@ -542,6 +584,7 @@
     bindDynamic();
     sync();
     syncAudioUI();
+    lazyBgs();
   }
 
   function sync() {
@@ -603,6 +646,8 @@
       else audio.paused ? playSong(curId) : audio.pause();
       return;
     }
+    const lyb = e.target.closest("[data-lyric]");
+    if (lyb) { openLyric(lyb.dataset.lyric, lyb); return; }
     const plr = e.target.closest("[data-plrow]");
     if (plr) { toggleSong(plr.dataset.plrow); return; }
     const s = e.target.closest("[data-sec]");
@@ -617,9 +662,9 @@
       toggle("songs", true);
       const c = document.getElementById("song-" + g.dataset.goto);
       if (c) {
-        c.querySelectorAll("details").forEach((d, i) => { if (i === 0) d.open = true; });
+        if (!c.querySelector("[data-lyric]")) c.querySelectorAll("details").forEach((d, i) => { if (i === 0) d.open = true; });
         c.scrollIntoView({ behavior: "smooth", block: "center" });
-        const sm = c.querySelector("summary");
+        const sm = c.querySelector("[data-lyric]") || c.querySelector("summary");
         if (sm) sm.focus();
       }
       return;
