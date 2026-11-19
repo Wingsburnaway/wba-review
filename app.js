@@ -418,7 +418,7 @@
     const lc = window.hasLyricCard && window.hasLyricCard(s.id);
     const lcfg = lc ? window.WBA_CARDS.find((x) => x.id === s.id) : null;
     return `<article class="card${lc ? " has-art" : ""}" id="song-${s.id}" data-song="${esc(s.title.toLowerCase())}">
-      ${lc ? `<div class="card-bg" data-bg="assets/lyrics/bg_${esc(s.id)}.webp" style="--card-sky:${lcfg.sky}" aria-hidden="true"></div>` : ""}
+      ${lc ? `<div class="card-bg" data-bg="assets/lyrics/bg_${esc(s.id)}.webp?v=${window.WBA_ASSET_V||''}" style="--card-sky:${lcfg.sky}" aria-hidden="true"></div>` : ""}
       <span class="num" aria-hidden="true">${String(s.n).padStart(2, "0")}</span>
       <h3>${esc(s.title)}</h3>
       <dl class="meta">
@@ -482,7 +482,7 @@
     const P = window.WBA_PALETTES || {};
     const thumbs = cards.map((s) => {
       const c = window.WBA_CARDS.find((x) => x.id === s.id);
-      return `<button type="button" class="bth" data-lyric="${esc(s.id)}" aria-haspopup="dialog" aria-label="Open the ${esc(s.title)} lyric card"><img src="assets/brand/th_${esc(s.id)}.webp" alt="" loading="lazy" width="216" height="288"><span class="bn">${String(s.n).padStart(2, "0")}</span><span class="bt">${esc(s.title)}</span><span class="bp" style="--g:${(P[c.palette] || {}).glow || "#888"}">${esc((P[c.palette] || {}).name || "")}</span></button>`;
+      return `<button type="button" class="bth" data-lyric="${esc(s.id)}" aria-haspopup="dialog" aria-label="Open the ${esc(s.title)} lyric card"><img src="assets/brand/th_${esc(s.id)}.webp?v=${window.WBA_ASSET_V||''}" alt="" loading="lazy" width="216" height="288"><span class="bn">${String(s.n).padStart(2, "0")}</span><span class="bt">${esc(s.title)}</span><span class="bp" style="--g:${(P[c.palette] || {}).glow || "#888"}">${esc((P[c.palette] || {}).name || "")}</span></button>`;
     }).join("");
     return `<p class="lead">Every mark and concept piece in use on this site. Black, bone, oxblood; hairline frames; marks must hold up in pure black &amp; white.</p>
     <div class="sw"><div style="background:#0b0b0b;color:#F2EFE6">BLACK</div><div style="background:#F2EFE6">BONE #F2EFE6</div><div style="background:#6E0F14;color:#F2EFE6">OXBLOOD #6E0F14</div></div>

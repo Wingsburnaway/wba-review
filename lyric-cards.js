@@ -1,5 +1,6 @@
 // WBA lyric cards (site build): config + renderer. Template = approved v5 card.
 // Assets: assets/lyrics/art_<id>.webp, title_<id>.webp, bg_<id>.webp (faded song-card background).
+window.WBA_ASSET_V = "202611191400";
 window.WBA_PALETTES = {
   "sodium-dusk":    { name: "Sodium Dusk",    sky: "#103842", glow: "#f29a3a" },
   "ember-crimson":  { name: "Ember Crimson",  sky: "#3a0d0c", glow: "#e0452a" }, // anchor tracks only
@@ -63,7 +64,18 @@ window.WBA_CARDS = [
       ["Mind your manners", "When your mansion’s", "left in the dark", "Just like the tents in the park", "When you’re left in the dark", "Just like the tents in the park"],
       ["Think I can’t see you? (It’s true)", "Can’t trust a silhouette (that’s you)", "I’m done defining (defining)", "What my eyes see through you", "It’s nothing"],
       ["Sole provider", "Hides the lighter", "When it’s needed most"],
-      ["Just like the tents in the park, left in the dark"]], title: { l: 4, w: 78, t: 2 }, ly: { l: 5, r: 5, t: 21.8, cols: 2, fs: 1.6 }, mb: 0.8 }
+      ["Just like the tents in the park, left in the dark"]], title: { l: 4, w: 78, t: 2 }, ly: { l: 5, r: 5, t: 21.8, cols: 2, fs: 1.6 }, mb: 0.8 },
+  { id: "zombie-stomp", palette: "rust-desert", value: "dusk", scene: "A rust-dusk cracked wasteland highway receding between rocky spires, dust and debris haze hanging in the air",
+    sky: "#28140c", scrim: "rgba(40,20,12,.58)", title: { l: 4, w: 86, t: 2 }, ly: { l: 10, r: 10, t: 24, cols: 1, fs: 2.0, center: true }, mb: 0.62 },
+  { id: "nameless", palette: "tidal-indigo", value: "night", scene: "A mid-century interior ceiling cracking and falling, a starburst lamp still lit in the dust, cracked floor below",
+    sky: "#010d29", scrim: "rgba(2,12,40,.52)",
+    stanzas: [["I just want your endless vacant", "I just want your nameless love"],
+      ["Bliss, it’s all that I need to subsist", "Don’t want a slap on the wrist", "I just want your name"],
+      ["She gonna walk you like a dog", "The leash that you’re on", "Is heavenly but I’ve been jokin", "You wanna hang like a drawer", "Pretend that you’re all", "The things that you have never spoken, yeah"],
+      ["I don’t want your tired impatient", "I just want your nameless love"],
+      ["This, I don’t need to resist", "Don’t want a kiss on the lips", "I just want endless…."],
+      ["Tell me that I’m dreaming", "when I’ve had enough", "Falling like the ceiling", "That’s how I wanna wake up"],
+      ["Wish I didn’t know I exist", "Just wanted time to remind me", "This is all there is, let’s go"]], title: { l: 5, w: 70, t: 1.8 }, ly: { l: 5, r: 5, t: 25.5, cols: 2, fs: 1.48 }, mb: 0.8 }
 ];
 
 // Each lyric section once: drop [labels]; remove any run of >=3 lines already sung earlier
@@ -118,8 +130,8 @@ window.lyricCardHTML = function (id, base) {
   const pal = P[c.palette];
   const st = c.stanzas || (s.lyrics ? window.lyricsOnce(s.lyrics) : null); // c.stanzas: hand-deduped override when the auto pass misses a near-repeat
   const ly = c.ly;
-  return `<article class="lc" id="lc-${c.id}" data-palette="${c.palette}" style="--sky:${c.sky};--glow:${pal.glow};--scrim:${c.scrim};--mb:${c.mb};--art:url(${base}art_${c.id}.webp)">
-  <h2 style="--tl:${c.title.l}%;--tw:${c.title.w}%;--tt:${c.title.t}%"><img src="${base}title_${c.id}.webp" alt="${esc(s.title)}"></h2>
+  return `<article class="lc" id="lc-${c.id}" data-palette="${c.palette}" style="--sky:${c.sky};--glow:${pal.glow};--scrim:${c.scrim};--mb:${c.mb};--art:url(${base}art_${c.id}.webp?v=${window.WBA_ASSET_V})">
+  <h2 style="--tl:${c.title.l}%;--tw:${c.title.w}%;--tt:${c.title.t}%"><img src="${base}title_${c.id}.webp?v=${window.WBA_ASSET_V}" alt="${esc(s.title)}"></h2>
   <div class="ly${ly.center ? " ctr" : ""}" style="--ll:${ly.l}%;--lr:${ly.r}%;--lt:${ly.t}%;--cols:${ly.cols};--fs:${ly.fs}cqw">${!st ? `<p class="soon">Lyrics coming soon</p>` : st.map((L) => `<div class="st${L.length > 9 ? " long" : ""}">${L.map((l) => `<p>${esc(l)}</p>`).join("")}</div>`).join("")}</div>
 </article>`;
 };
