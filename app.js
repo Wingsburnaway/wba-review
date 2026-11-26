@@ -73,8 +73,8 @@
   };
   let sortBy = { key: "n", dir: "asc" };
 
-  const DRUM_AT = Date.parse("2027-01-10T14:00:00-06:00");
-  const DRUM_META = "Sunday, January 10, 2027 · 2:00 PM CT · Stormy Cooper Media, Houston, TX";
+  const DRUM_AT = Date.parse("2027-02-02T08:30:00-06:00");
+  const DRUM_META = "February 2–4, 2027 · Hendyamps Studio, Richmond, TX · Feb 2: 8:30 AM–2:30 PM CT · Feb 3–4: 10:30 AM–2:30 PM CT";
   const pad2 = (n) => String(n).padStart(2, "0");
   function tickCountdown() {
     const root = $("#countdown");
